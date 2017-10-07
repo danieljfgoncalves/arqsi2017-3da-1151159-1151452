@@ -7,5 +7,10 @@ namespace ElectronicPrescription.Models
 {
     public class MedicalReceipt
     {
+        public int MedicalReceiptId { get; set; }
+
+        public DateTime CreationDate { get; set; }
+
+        public virtual ICollection<Prescription> Prescriptions { get; set; }
     }
 }
