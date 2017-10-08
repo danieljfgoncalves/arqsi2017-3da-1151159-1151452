@@ -11,8 +11,9 @@ namespace ElectronicPrescription.Models
 
         public DateTime ExpirationDate { get; set; }
 
-        public virtual Presentation Presentation { get; set; }
+        public int? MedicalReceiptId { get; set; }
+        public MedicalReceipt MedicalReceipt { get; set; }
 
-        public virtual MedicalReceipt MedicalReceipt { get; set; }
+        public Presentation Presentation { get; set; }
     }
 }

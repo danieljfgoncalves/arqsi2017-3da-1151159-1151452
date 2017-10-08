@@ -11,8 +11,8 @@ using System;
 namespace ElectronicPrescription.Migrations
 {
     [DbContext(typeof(ElectronicPrescriptionContext))]
-    [Migration("20171007194235_PrescriptionPresentationRelationChanged")]
-    partial class PrescriptionPresentationRelationChanged
+    [Migration("20171008182655_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -67,7 +67,7 @@ namespace ElectronicPrescription.Migrations
             modelBuilder.Entity("ElectronicPrescription.Models.Prescription", b =>
                 {
                     b.HasOne("ElectronicPrescription.Models.MedicalReceipt", "MedicalReceipt")
-                        .WithMany("Prescriptions")
+                        .WithMany("Prescription")
                         .HasForeignKey("MedicalReceiptId");
                 });
 

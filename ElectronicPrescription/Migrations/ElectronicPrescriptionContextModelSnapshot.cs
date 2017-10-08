@@ -66,7 +66,7 @@ namespace ElectronicPrescription.Migrations
             modelBuilder.Entity("ElectronicPrescription.Models.Prescription", b =>
                 {
                     b.HasOne("ElectronicPrescription.Models.MedicalReceipt", "MedicalReceipt")
-                        .WithMany("Prescriptions")
+                        .WithMany("Prescription")
                         .HasForeignKey("MedicalReceiptId");
                 });
 

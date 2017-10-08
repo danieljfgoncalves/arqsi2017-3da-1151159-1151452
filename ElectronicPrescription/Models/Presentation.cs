@@ -9,7 +9,7 @@ namespace ElectronicPrescription.Models
 {
     public class Presentation
     {
-        [Key, ForeignKey("Prescription")]
+        [ForeignKey("Prescription")]
         public int PresentationId { get; set; }
 
         public string Form { get; set; }

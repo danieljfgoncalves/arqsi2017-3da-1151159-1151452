@@ -29,8 +29,7 @@ namespace ElectronicPrescription.Migrations
                     PrescriptionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MedicalReceiptId = table.Column<int>(type: "int", nullable: true),
-                    PresentationId = table.Column<int>(type: "int", nullable: false)
+                    MedicalReceiptId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

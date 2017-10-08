@@ -11,6 +11,6 @@ namespace ElectronicPrescription.Models
 
         public DateTime CreationDate { get; set; }
 
-        public virtual ICollection<Prescription> Prescriptions { get; set; }
+        public ICollection<Prescription> Prescription { get; set; }
     }
 }
