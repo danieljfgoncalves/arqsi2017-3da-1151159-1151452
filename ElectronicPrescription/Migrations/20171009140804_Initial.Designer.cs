@@ -11,8 +11,8 @@ using System;
 namespace ElectronicPrescription.Migrations
 {
     [DbContext(typeof(ElectronicPrescriptionContext))]
-    [Migration("20171008220739_Add-Model")]
-    partial class AddModel
+    [Migration("20171009140804_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -106,18 +106,23 @@ namespace ElectronicPrescription.Migrations
 
                     b.Property<int?>("PrescribedPosologyPosologyId");
 
+                    b.Property<int?>("PresentationId");
+
                     b.HasKey("PrescriptionId");
 
                     b.HasIndex("MedicalReceiptId");
 
                     b.HasIndex("PrescribedPosologyPosologyId");
 
+                    b.HasIndex("PresentationId");
+
                     b.ToTable("Prescription");
                 });
 
             modelBuilder.Entity("ElectronicPrescription.Models.Presentation", b =>
                 {
-                    b.Property<int>("PresentationId");
+                    b.Property<int>("PresentationId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<float>("Concentration");
 
@@ -158,6 +163,10 @@ namespace ElectronicPrescription.Migrations
                     b.HasOne("ElectronicPrescription.Models.Posology", "PrescribedPosology")
                         .WithMany()
                         .HasForeignKey("PrescribedPosologyPosologyId");
+
+                    b.HasOne("ElectronicPrescription.Models.Presentation", "Presentation")
+                        .WithMany()
+                        .HasForeignKey("PresentationId");
                 });
 
             modelBuilder.Entity("ElectronicPrescription.Models.Presentation", b =>
@@ -169,11 +178,6 @@ namespace ElectronicPrescription.Migrations
                     b.HasOne("ElectronicPrescription.Models.Medicine", "Medicine")
                         .WithMany("Presentation")
                         .HasForeignKey("MedicineId");
-
-                    b.HasOne("ElectronicPrescription.Models.Prescription", "Prescription")
-                        .WithOne("Presentation")
-                        .HasForeignKey("ElectronicPrescription.Models.Presentation", "PresentationId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }
