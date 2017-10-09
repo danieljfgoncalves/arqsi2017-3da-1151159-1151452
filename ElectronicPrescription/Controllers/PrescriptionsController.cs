@@ -22,9 +22,17 @@ namespace ElectronicPrescription.Controllers
 
         // GET: api/Prescriptions
         [HttpGet]
-        public IEnumerable<Prescription> GetPrescription()
+        public IEnumerable<PrescriptionDTO> GetPrescription()
         {
-            return _context.Prescription;
+            var prescriptions = from p in _context.Prescription
+                                select new PrescriptionDTO
+                                {
+                                    Id = p.PrescriptionId,
+                                    ExpirationDate = p.ExpirationDate.ToShortDateString(),
+                                    MedicalReceiptCreationDate = p.MedicalReceipt.CreationDate.ToShortDateString()
+                                };
+
+            return prescriptions;
         }
 
         // GET: api/Prescriptions/5
@@ -36,7 +44,12 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var prescription = await _context.Prescription.SingleOrDefaultAsync(m => m.PrescriptionId == id);
+            var prescription = await _context.Prescription.Select(p =>
+                                new PrescriptionDTO {
+                                    Id = p.PrescriptionId,
+                                    ExpirationDate = p.ExpirationDate.ToShortDateString(),
+                                    MedicalReceiptCreationDate = p.MedicalReceipt.CreationDate.ToShortDateString()
+                                }).SingleOrDefaultAsync(m => m.Id == id);
 
             if (prescription == null)
             {
