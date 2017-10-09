@@ -9,7 +9,6 @@ namespace ElectronicPrescription.Models
 {
     public class Presentation
     {
-        [ForeignKey("Prescription")]
         public int PresentationId { get; set; }
 
         public string Form { get; set; }
@@ -17,8 +16,6 @@ namespace ElectronicPrescription.Models
         public float Concentration { get; set; }
 
         public int Quantity { get; set; }
-
-        public Prescription Prescription { get; set; }
 
         public int? MedicineId { get; set; }
 
