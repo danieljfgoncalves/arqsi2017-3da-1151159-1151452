@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ElectronicPrescription.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Produces("application/json")]
     [Route("api/MedicalReceipts")]
     public class MedicalReceiptsController : Controller

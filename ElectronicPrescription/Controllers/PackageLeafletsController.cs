@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ElectronicPrescription.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Produces("application/json")]
     [Route("api/PackageLeaflets")]
     public class PackageLeafletsController : Controller
