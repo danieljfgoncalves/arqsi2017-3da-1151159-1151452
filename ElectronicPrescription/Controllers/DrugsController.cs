@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ElectronicPrescription.Models;
+using ElectronicPrescription.DTOs;
 
 namespace ElectronicPrescription.Controllers
 {
@@ -22,9 +23,16 @@ namespace ElectronicPrescription.Controllers
 
         // GET: api/Drugs
         [HttpGet]
-        public IEnumerable<Drug> GetDrug()
+        public IEnumerable<DrugDTO> GetDrug()
         {
-            return _context.Drug;
+            var drugs = from d in _context.Drug
+                        select new DrugDTO()
+                        {
+                            DrugId = d.DrugId,
+                            Name = d.Name
+                        };
+
+            return drugs;
         }
 
         // GET: api/Drugs/5
@@ -36,7 +44,12 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var drug = await _context.Drug.SingleOrDefaultAsync(m => m.DrugId == id);
+            var drug = await _context.Drug.Select(d => 
+                        new DrugDTO()
+                        {
+                            DrugId = d.DrugId,
+                            Name = d.Name
+                        }).SingleOrDefaultAsync(d => d.DrugId == id);
 
             if (drug == null)
             {
