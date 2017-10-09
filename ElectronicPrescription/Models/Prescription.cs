@@ -15,9 +15,10 @@ namespace ElectronicPrescription.Models
         public MedicalReceipt MedicalReceipt { get; set; }
 
         public int? PresentationId { get; set; }
-
         public Presentation Presentation { get; set; }
 
-        public Posology PrescribedPosology { get; set; }
+        // Prescribed Posology
+        public int? PosologyId { get; set; }
+        public Posology Posology { get; set; }
     }
 }

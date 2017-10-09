@@ -8,7 +8,6 @@ namespace ElectronicPrescription.Models
 {
     public class Posology
     {
-        [ForeignKey("Prescription")]
         public int PosologyId { get; set; }
 
         public int Quantity { get; set; }
@@ -18,7 +17,5 @@ namespace ElectronicPrescription.Models
         public string Interval { get; set; }
 
         public string Period { get; set; }
-
-        public ICollection<PackageLeaflet> PackageLeaflet { get; set; }
     }
 }

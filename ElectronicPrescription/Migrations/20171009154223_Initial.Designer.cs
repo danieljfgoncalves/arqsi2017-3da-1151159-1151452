@@ -11,7 +11,7 @@ using System;
 namespace ElectronicPrescription.Migrations
 {
     [DbContext(typeof(ElectronicPrescriptionContext))]
-    [Migration("20171009140804_Initial")]
+    [Migration("20171009154223_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,7 +104,7 @@ namespace ElectronicPrescription.Migrations
 
                     b.Property<int?>("MedicalReceiptId");
 
-                    b.Property<int?>("PrescribedPosologyPosologyId");
+                    b.Property<int?>("PosologyId");
 
                     b.Property<int?>("PresentationId");
 
@@ -112,7 +112,7 @@ namespace ElectronicPrescription.Migrations
 
                     b.HasIndex("MedicalReceiptId");
 
-                    b.HasIndex("PrescribedPosologyPosologyId");
+                    b.HasIndex("PosologyId");
 
                     b.HasIndex("PresentationId");
 
@@ -146,7 +146,7 @@ namespace ElectronicPrescription.Migrations
             modelBuilder.Entity("ElectronicPrescription.Models.PackageLeaflet", b =>
                 {
                     b.HasOne("ElectronicPrescription.Models.Posology", "GenericPosology")
-                        .WithMany("PackageLeaflet")
+                        .WithMany()
                         .HasForeignKey("GenericPosologyId");
 
                     b.HasOne("ElectronicPrescription.Models.Presentation", "Presentation")
@@ -160,9 +160,9 @@ namespace ElectronicPrescription.Migrations
                         .WithMany("Prescription")
                         .HasForeignKey("MedicalReceiptId");
 
-                    b.HasOne("ElectronicPrescription.Models.Posology", "PrescribedPosology")
+                    b.HasOne("ElectronicPrescription.Models.Posology", "Posology")
                         .WithMany()
-                        .HasForeignKey("PrescribedPosologyPosologyId");
+                        .HasForeignKey("PosologyId");
 
                     b.HasOne("ElectronicPrescription.Models.Presentation", "Presentation")
                         .WithMany()

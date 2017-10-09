@@ -128,7 +128,7 @@ namespace ElectronicPrescription.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MedicalReceiptId = table.Column<int>(type: "int", nullable: true),
-                    PrescribedPosologyPosologyId = table.Column<int>(type: "int", nullable: true),
+                    PosologyId = table.Column<int>(type: "int", nullable: true),
                     PresentationId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -141,8 +141,8 @@ namespace ElectronicPrescription.Migrations
                         principalColumn: "MedicalReceiptId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Prescription_Posology_PrescribedPosologyPosologyId",
-                        column: x => x.PrescribedPosologyPosologyId,
+                        name: "FK_Prescription_Posology_PosologyId",
+                        column: x => x.PosologyId,
                         principalTable: "Posology",
                         principalColumn: "PosologyId",
                         onDelete: ReferentialAction.Restrict);
@@ -170,9 +170,9 @@ namespace ElectronicPrescription.Migrations
                 column: "MedicalReceiptId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prescription_PrescribedPosologyPosologyId",
+                name: "IX_Prescription_PosologyId",
                 table: "Prescription",
-                column: "PrescribedPosologyPosologyId");
+                column: "PosologyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Prescription_PresentationId",
