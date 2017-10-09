@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ElectronicPrescription.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ElectronicPrescription.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/MedicalReceipts")]
     public class MedicalReceiptsController : Controller

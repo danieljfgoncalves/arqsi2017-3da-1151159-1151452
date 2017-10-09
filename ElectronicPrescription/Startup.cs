@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using ElectronicPrescription.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace ElectronicPrescription
 {
@@ -29,6 +31,27 @@ namespace ElectronicPrescription
 
             services.AddDbContext<ElectronicPrescriptionContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("ElectronicPrescriptionContext")));
+
+            services.AddIdentity<UserEntity, IdentityRole>()
+                 .AddEntityFrameworkStores<ElectronicPrescriptionContext>()
+                 .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.Events = new CookieAuthenticationEvents
+                {
+                    OnRedirectToLogin = ctx =>
+                    {
+                        if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+                        {
+                            ctx.Response.StatusCode = 401;
+                            return Task.FromResult<object>(null);
+                        }
+                        ctx.Response.Redirect(ctx.RedirectUri);
+                        return Task.FromResult<object>(null);
+                    }
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +62,7 @@ namespace ElectronicPrescription
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
