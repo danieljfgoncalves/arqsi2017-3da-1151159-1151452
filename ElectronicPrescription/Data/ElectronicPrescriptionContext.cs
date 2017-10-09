@@ -19,5 +19,13 @@ namespace ElectronicPrescription.Models
         public DbSet<ElectronicPrescription.Models.Prescription> Prescription { get; set; }
 
         public DbSet<ElectronicPrescription.Models.Presentation> Presentation { get; set; }
+
+        public DbSet<ElectronicPrescription.Models.Drug> Drug { get; set; }
+
+        public DbSet<ElectronicPrescription.Models.Medicine> Medicine { get; set; }
+
+        public DbSet<ElectronicPrescription.Models.PackageLeaflet> PackageLeaflet { get; set; }
+
+        public DbSet<ElectronicPrescription.Models.Posology> Posology { get; set; }
     }
 }

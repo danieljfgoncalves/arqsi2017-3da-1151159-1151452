@@ -11,9 +11,10 @@ using System;
 namespace ElectronicPrescription.Migrations
 {
     [DbContext(typeof(ElectronicPrescriptionContext))]
-    partial class ElectronicPrescriptionContextModelSnapshot : ModelSnapshot
+    [Migration("20171008220739_Add-Model")]
+    partial class AddModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
