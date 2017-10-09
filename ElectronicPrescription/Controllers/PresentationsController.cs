@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ElectronicPrescription.Models;
+using ElectronicPrescription.DTOs;
 
 namespace ElectronicPrescription.Controllers
 {
@@ -22,9 +23,18 @@ namespace ElectronicPrescription.Controllers
 
         // GET: api/Presentations
         [HttpGet]
-        public IEnumerable<Presentation> GetPresentation()
+        public IEnumerable<PresentationDTO> GetPresentation()
         {
-            return _context.Presentation;
+            var presentations = from p in _context.Presentation
+                                select new PresentationDTO()
+                                {
+                                    PresentationId = p.PresentationId,
+                                    Form = p.Form,
+                                    Concentration = p.Concentration,
+                                    Quantity = p.Quantity
+                                };
+
+            return presentations;
         }
 
         // GET: api/Presentations/5
@@ -36,7 +46,15 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var presentation = await _context.Presentation.SingleOrDefaultAsync(m => m.PresentationId == id);
+            var presentation = await _context.Presentation.Select(p =>
+                                new PresentationDTO()
+                                {
+                                    PresentationId = p.PresentationId,
+                                    Form = p.Form,
+                                    Concentration = p.Concentration,
+                                    Quantity = p.Quantity
+                                }
+                                ).SingleOrDefaultAsync(p => p.PresentationId == id);
 
             if (presentation == null)
             {

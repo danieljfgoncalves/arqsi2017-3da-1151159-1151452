@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ElectronicPrescription.Models;
+using ElectronicPrescription.DTOs;
 
 namespace ElectronicPrescription.Controllers
 {
@@ -22,9 +23,19 @@ namespace ElectronicPrescription.Controllers
 
         // GET: api/Posologies
         [HttpGet]
-        public IEnumerable<Posology> GetPosology()
+        public IEnumerable<PosologyDTO> GetPosology()
         {
-            return _context.Posology;
+            var posologies = from p in _context.Posology
+                        select new PosologyDTO()
+                        {
+                            PosologyId = p.PosologyId,
+                            Quantity = p.Quantity,
+                            Technique = p.Technique,
+                            Interval = p.Interval,
+                            Period = p.Period
+                        };
+
+            return posologies;
         }
 
         // GET: api/Posologies/5
@@ -36,7 +47,15 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var posology = await _context.Posology.SingleOrDefaultAsync(m => m.PosologyId == id);
+            var posology = await _context.Posology.Select(p =>
+                            new PosologyDTO()
+                            {
+                                PosologyId = p.PosologyId,
+                                Quantity = p.Quantity,
+                                Technique = p.Technique,
+                                Interval = p.Interval,
+                                Period = p.Period
+                            }).SingleOrDefaultAsync(p => p.PosologyId == id);
 
             if (posology == null)
             {
