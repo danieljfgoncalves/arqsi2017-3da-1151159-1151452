@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ElectronicPrescription.Models;
+using ElectronicPrescription.DTOs;
 
 namespace ElectronicPrescription.Controllers
 {
@@ -22,9 +23,16 @@ namespace ElectronicPrescription.Controllers
 
         // GET: api/PackageLeaflets
         [HttpGet]
-        public IEnumerable<PackageLeaflet> GetPackageLeaflet()
+        public IEnumerable<PackageLeafletDTO> GetPackageLeaflet()
         {
-            return _context.PackageLeaflet;
+            var packageLeaflet = from pl in _context.PackageLeaflet
+                                 select new PackageLeafletDTO()
+                                 {
+                                     PackageLeafletId = pl.PackageLeafletId,
+                                     Description = pl.Description
+                                 };
+
+            return packageLeaflet;
         }
 
         // GET: api/PackageLeaflets/5
@@ -36,7 +44,12 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var packageLeaflet = await _context.PackageLeaflet.SingleOrDefaultAsync(m => m.PackageLeafletId == id);
+            var packageLeaflet = await _context.PackageLeaflet.Select(pl =>
+                                 new PackageLeafletDTO()
+                                 {
+                                     PackageLeafletId = pl.PackageLeafletId,
+                                     Description = pl.Description
+                                 }).SingleOrDefaultAsync(pl => pl.PackageLeafletId == id);
 
             if (packageLeaflet == null)
             {
