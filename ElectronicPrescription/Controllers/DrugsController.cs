@@ -23,7 +23,7 @@ namespace ElectronicPrescription.Controllers
 
         // GET: api/Drugs
         [HttpGet]
-        public IEnumerable<DrugDTO> GetDrug()
+        public IEnumerable<DrugDTO> GetDrug([FromQuery]string name)
         {
             var drugs = from d in _context.Drug
                         select new DrugDTO()
@@ -31,6 +31,15 @@ namespace ElectronicPrescription.Controllers
                             DrugId = d.DrugId,
                             Name = d.Name
                         };
+
+            if (name != null)
+            {
+                if (name.StartsWith('"') && name.EndsWith('"'))
+                {
+                    name = name.Substring(1, name.Length - 2);
+                }
+                drugs = drugs.Where(d => d.Name == name);
+            }
 
             return drugs;
         }
