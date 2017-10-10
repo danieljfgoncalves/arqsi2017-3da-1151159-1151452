@@ -55,7 +55,7 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var drug = await _context.Drug.Select(d => 
+            var drug = await _context.Drug.Select(d =>
                         new DrugDTO()
                         {
                             DrugId = d.DrugId,
@@ -68,6 +68,32 @@ namespace ElectronicPrescription.Controllers
             }
 
             return Ok(drug);
+        }
+
+        // GET: api/Drugs/5/Presentations
+        [HttpGet("{id}/Presentations")]
+        public async Task<IActionResult> GetPresentationsByDrug([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var drugs = await _context.Drug.Include(d => d.Presentation).SingleOrDefaultAsync(d => d.DrugId == id);
+
+            if (drugs == null)
+            {
+                return NotFound();
+            }
+
+            var presentations = drugs.Presentation.Select(ps =>
+                new DrugPresentationDTO()
+                {
+                    PresentationId = ps.PresentationId
+                }
+            );
+
+            return Ok(presentations);
         }
 
         // PUT: api/Drugs/5
