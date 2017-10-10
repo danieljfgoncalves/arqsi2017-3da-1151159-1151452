@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ElectronicPrescription.Models;
 using ElectronicPrescription.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ElectronicPrescription.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Produces("application/json")]
     [Route("api/Presentations")]
     public class PresentationsController : Controller

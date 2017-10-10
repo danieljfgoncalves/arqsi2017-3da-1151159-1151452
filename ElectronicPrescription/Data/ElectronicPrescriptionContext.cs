@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ElectronicPrescription.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace ElectronicPrescription.Models
 {
-    public class ElectronicPrescriptionContext : DbContext
+    public class ElectronicPrescriptionContext : IdentityDbContext<UserEntity>
     {
         public ElectronicPrescriptionContext (DbContextOptions<ElectronicPrescriptionContext> options)
             : base(options)
