@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ElectronicPrescription.Models;
+using ElectronicPrescription.DTOs;
 
 namespace ElectronicPrescription.Controllers
 {
@@ -20,11 +21,27 @@ namespace ElectronicPrescription.Controllers
             _context = context;
         }
 
-        // GET: api/Medicines
+        // GET: api/Medicines or api/Medicines/?name={name}
         [HttpGet]
-        public IEnumerable<Medicine> GetMedicine()
+        public IEnumerable<MedicineDTO> GetMedicine([FromQuery] string name = "")
         {
-            return _context.Medicine;
+            var medicines = from m in _context.Medicine
+                        select new MedicineDTO()
+                        {
+                            MedicineId = m.MedicineId,
+                            Name = m.Name
+                        };
+
+            if (!name.Equals(""))
+            {
+                if (name.StartsWith('"') && name.EndsWith('"'))
+                {
+                    name = name.Substring(1, name.Length - 2);
+                }
+                medicines = medicines.Where(d => d.Name == name);
+            }
+
+            return medicines;
         }
 
         // GET: api/Medicines/5
@@ -36,7 +53,12 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var medicine = await _context.Medicine.SingleOrDefaultAsync(m => m.MedicineId == id);
+            var medicine = await _context.Medicine.Select(md => 
+                            new MedicineDTO()
+                            {
+                                MedicineId = md.MedicineId,
+                                Name = md.Name
+                            }).SingleOrDefaultAsync(m => m.MedicineId == id);
 
             if (medicine == null)
             {
@@ -44,6 +66,37 @@ namespace ElectronicPrescription.Controllers
             }
 
             return Ok(medicine);
+        }
+
+        // GET: api/Medicines/5/presentations
+        [HttpGet("{id}/Presentations")]
+        public async Task<IActionResult> GetPresentationsByMedicine([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var medicine = await _context.Medicine.Select(md =>
+                            new Medicine()
+                            {
+                                MedicineId = md.MedicineId,
+                                Name = md.Name,
+                                Presentation = md.Presentation
+                            }).SingleOrDefaultAsync(m => m.MedicineId == id);
+
+            if (medicine == null)
+            {
+                return NotFound();
+            }
+
+            var presentations = medicine.Presentation.Select(ps =>
+            new MedicinePresentationDTO()
+            {
+                PresentationId = ps.PresentationId
+            });
+
+            return Ok(presentations);
         }
 
         // PUT: api/Medicines/5
