@@ -79,13 +79,7 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var medicine = await _context.Medicine.Select(md =>
-                            new Medicine()
-                            {
-                                MedicineId = md.MedicineId,
-                                Name = md.Name,
-                                Presentation = md.Presentation
-                            }).SingleOrDefaultAsync(m => m.MedicineId == id);
+            var medicine = await _context.Medicine.Include(m => m.Presentation).SingleOrDefaultAsync(m => m.MedicineId == id);
 
             if (medicine == null)
             {
@@ -99,6 +93,41 @@ namespace ElectronicPrescription.Controllers
             });
 
             return Ok(presentations);
+        }
+
+        // GET: api/Medicines/5/posologies
+        [HttpGet("{id}/Posologies")]
+        public async Task<IActionResult> GetPosologiesByMedicine([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var medicine = await _context.Medicine.Include(m => m.Presentation)
+                           .ThenInclude(p => p.PackageLeaflet).ThenInclude(pk => pk.GenericPosology)
+                           .SingleOrDefaultAsync(m => m.MedicineId == id);
+                           
+
+            if (medicine == null)
+            {
+                return NotFound();
+            }
+
+            // return a list of Posologies DTOs
+            var posologies = medicine.Presentation.SelectMany(pr =>
+                             pr.PackageLeaflet.Select(pk =>
+                                pk.GenericPosology)).Select(ps =>
+                                new PosologyDTO()
+                                {
+                                    PosologyId = ps.PosologyId,
+                                    Quantity = ps.Quantity,
+                                    Technique = ps.Technique,
+                                    Interval = ps.Interval,
+                                    Period = ps.Period
+                                });
+
+            return Ok(posologies);
         }
 
         // PUT: api/Medicines/5
