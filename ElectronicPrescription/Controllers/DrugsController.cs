@@ -23,7 +23,7 @@ namespace ElectronicPrescription.Controllers
             _context = context;
         }
 
-        // GET: api/Drugs
+        // GET: api/Drugs or api/Drugs/?name={name}
         [HttpGet]
         public IEnumerable<DrugDTO> GetDrug([FromQuery]string name)
         {
@@ -70,6 +70,22 @@ namespace ElectronicPrescription.Controllers
             return Ok(drug);
         }
 
+        // GET: api/Drugs/5/Medicines
+        [HttpGet("{id}/Medicines")]
+        public IEnumerable<MedicineDTO> GetMedicinesByDrug([FromRoute] int id)
+        {
+
+            var medicines = _context.Drug.Where(d => d.DrugId == id).SelectMany(d => d.Presentation)
+                        .Select(pr => pr.Medicine).Distinct().Select(m =>
+                        new MedicineDTO()
+                        {
+                            MedicineId = m.MedicineId,
+                            Name = m.Name
+                        });
+
+            return medicines;
+        }
+
         // GET: api/Drugs/5/Presentations
         [HttpGet("{id}/Presentations")]
         public async Task<IActionResult> GetPresentationsByDrug([FromRoute] int id)
@@ -94,6 +110,41 @@ namespace ElectronicPrescription.Controllers
             );
 
             return Ok(presentations);
+        }
+
+        // GET: api/Drugs/5/posologies
+        [HttpGet("{id}/Posologies")]
+        public async Task<IActionResult> GetPosologiesByDrug([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var drug = await _context.Drug.Include(d => d.Presentation)
+                           .ThenInclude(pr => pr.PackageLeaflet).ThenInclude(pk => pk.GenericPosology)
+                           .SingleOrDefaultAsync(d => d.DrugId == id);
+
+
+            if (drug == null)
+            {
+                return NotFound();
+            }
+
+            // return a list of Posologies DTOs
+            var posologies = drug.Presentation.SelectMany(pr =>
+                             pr.PackageLeaflet.Select(pk =>
+                                pk.GenericPosology)).Select(ps =>
+                                new PosologyDTO()
+                                {
+                                    PosologyId = ps.PosologyId,
+                                    Quantity = ps.Quantity,
+                                    Technique = ps.Technique,
+                                    Interval = ps.Interval,
+                                    Period = ps.Period
+                                });
+
+            return Ok(posologies);
         }
 
         // PUT: api/Drugs/5
