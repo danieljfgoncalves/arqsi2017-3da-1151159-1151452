@@ -1,0 +1,31 @@
+@startuml "dm_it2_global"
+
+' Components
+node "w:Windows Server" {
+  database "SQL Database" {
+    [MedicinesDB]
+  }
+  folder "ASP.NET Service" {
+    [MedicinesBackend]
+  }
+
+  node "IIS Server" as iis
+}
+
+cloud "az:Azure Cloud Server" {
+  database "MongoDB" {
+      [ReceiptsDB]
+  }
+  folder "node.js" {
+      [ReceiptsFrontend]
+  }
+}
+
+' Relations
+[MedicinesDB] .. [MedicinesBackend]
+[MedicinesBackend] .. iis
+[MedicinesBackend] . [ReceiptsFrontend]
+[ReceiptsFrontend] .. [ReceiptsDB]
+
+
+@enduml
