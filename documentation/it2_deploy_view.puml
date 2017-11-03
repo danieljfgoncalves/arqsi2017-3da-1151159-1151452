@@ -27,5 +27,4 @@ cloud "az:Azure Cloud Server" {
 [MedicinesBackend] . [ReceiptsFrontend]
 [ReceiptsFrontend] .. [ReceiptsDB]
 
-
 @enduml
