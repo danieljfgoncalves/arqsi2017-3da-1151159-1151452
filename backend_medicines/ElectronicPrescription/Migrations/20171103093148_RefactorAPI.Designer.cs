@@ -11,8 +11,8 @@ using System;
 namespace ElectronicPrescription.Migrations
 {
     [DbContext(typeof(ElectronicPrescriptionContext))]
-    [Migration("20171009181449_UserIdentity")]
-    partial class UserIdentity
+    [Migration("20171103093148_RefactorAPI")]
+    partial class RefactorAPI
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,26 +33,18 @@ namespace ElectronicPrescription.Migrations
                     b.ToTable("Drug");
                 });
 
-            modelBuilder.Entity("ElectronicPrescription.Models.MedicalReceipt", b =>
-                {
-                    b.Property<int>("MedicalReceiptId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreationDate");
-
-                    b.HasKey("MedicalReceiptId");
-
-                    b.ToTable("MedicalReceipt");
-                });
-
             modelBuilder.Entity("ElectronicPrescription.Models.Medicine", b =>
                 {
                     b.Property<int>("MedicineId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("DrugId");
+
                     b.Property<string>("Name");
 
                     b.HasKey("MedicineId");
+
+                    b.HasIndex("DrugId");
 
                     b.ToTable("Medicine");
                 });
@@ -95,30 +87,6 @@ namespace ElectronicPrescription.Migrations
                     b.ToTable("Posology");
                 });
 
-            modelBuilder.Entity("ElectronicPrescription.Models.Prescription", b =>
-                {
-                    b.Property<int>("PrescriptionId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.Property<int?>("MedicalReceiptId");
-
-                    b.Property<int?>("PosologyId");
-
-                    b.Property<int?>("PresentationId");
-
-                    b.HasKey("PrescriptionId");
-
-                    b.HasIndex("MedicalReceiptId");
-
-                    b.HasIndex("PosologyId");
-
-                    b.HasIndex("PresentationId");
-
-                    b.ToTable("Prescription");
-                });
-
             modelBuilder.Entity("ElectronicPrescription.Models.Presentation", b =>
                 {
                     b.Property<int>("PresentationId")
@@ -130,15 +98,11 @@ namespace ElectronicPrescription.Migrations
 
                     b.Property<string>("Form");
 
-                    b.Property<int?>("MedicineId");
-
                     b.Property<int>("Quantity");
 
                     b.HasKey("PresentationId");
 
                     b.HasIndex("DrugId");
-
-                    b.HasIndex("MedicineId");
 
                     b.ToTable("Presentation");
                 });
@@ -302,6 +266,13 @@ namespace ElectronicPrescription.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ElectronicPrescription.Models.Medicine", b =>
+                {
+                    b.HasOne("ElectronicPrescription.Models.Drug", "Drug")
+                        .WithMany("Medicine")
+                        .HasForeignKey("DrugId");
+                });
+
             modelBuilder.Entity("ElectronicPrescription.Models.PackageLeaflet", b =>
                 {
                     b.HasOne("ElectronicPrescription.Models.Posology", "GenericPosology")
@@ -313,30 +284,11 @@ namespace ElectronicPrescription.Migrations
                         .HasForeignKey("PresentationId");
                 });
 
-            modelBuilder.Entity("ElectronicPrescription.Models.Prescription", b =>
-                {
-                    b.HasOne("ElectronicPrescription.Models.MedicalReceipt", "MedicalReceipt")
-                        .WithMany("Prescription")
-                        .HasForeignKey("MedicalReceiptId");
-
-                    b.HasOne("ElectronicPrescription.Models.Posology", "Posology")
-                        .WithMany()
-                        .HasForeignKey("PosologyId");
-
-                    b.HasOne("ElectronicPrescription.Models.Presentation", "Presentation")
-                        .WithMany()
-                        .HasForeignKey("PresentationId");
-                });
-
             modelBuilder.Entity("ElectronicPrescription.Models.Presentation", b =>
                 {
                     b.HasOne("ElectronicPrescription.Models.Drug", "Drug")
                         .WithMany("Presentation")
                         .HasForeignKey("DrugId");
-
-                    b.HasOne("ElectronicPrescription.Models.Medicine", "Medicine")
-                        .WithMany("Presentation")
-                        .HasForeignKey("MedicineId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

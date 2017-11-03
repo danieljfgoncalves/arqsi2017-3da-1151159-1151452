@@ -15,10 +15,6 @@ namespace ElectronicPrescription.Models
         {
         }
 
-        public DbSet<ElectronicPrescription.Models.MedicalReceipt> MedicalReceipt { get; set; }
-
-        public DbSet<ElectronicPrescription.Models.Prescription> Prescription { get; set; }
-
         public DbSet<ElectronicPrescription.Models.Presentation> Presentation { get; set; }
 
         public DbSet<ElectronicPrescription.Models.Drug> Drug { get; set; }

@@ -79,14 +79,14 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var medicine = await _context.Medicine.Include(m => m.Presentation).SingleOrDefaultAsync(m => m.MedicineId == id);
+            var medicine = await _context.Medicine.Include(m => m.Drug).ThenInclude(d => d.Presentation).SingleOrDefaultAsync(m => m.MedicineId == id);
 
             if (medicine == null)
             {
                 return NotFound();
             }
 
-            var presentations = medicine.Presentation.Select(ps =>
+            var presentations = medicine.Drug.Presentation.Select(ps =>
             new MedicinePresentationDTO()
             {
                 PresentationId = ps.PresentationId
@@ -104,7 +104,8 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var medicine = await _context.Medicine.Include(m => m.Presentation)
+            var medicine = await _context.Medicine.Include(m => m.Drug)
+                           .ThenInclude(d => d.Presentation)
                            .ThenInclude(p => p.PackageLeaflet).ThenInclude(pk => pk.GenericPosology)
                            .SingleOrDefaultAsync(m => m.MedicineId == id);
                            
@@ -115,7 +116,7 @@ namespace ElectronicPrescription.Controllers
             }
 
             // return a list of Posologies DTOs
-            var posologies = medicine.Presentation.SelectMany(pr =>
+            var posologies = medicine.Drug.Presentation.SelectMany(pr =>
                              pr.PackageLeaflet.Select(pk =>
                                 pk.GenericPosology)).Select(ps =>
                                 new PosologyDTO()

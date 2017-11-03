@@ -17,10 +17,6 @@ namespace ElectronicPrescription.Models
 
         public int Quantity { get; set; }
 
-        public int? MedicineId { get; set; }
-
-        public Medicine Medicine { get; set; }
-
         public int? DrugId { get; set; }
 
         public Drug Drug { get; set; }

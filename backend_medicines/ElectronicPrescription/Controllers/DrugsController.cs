@@ -72,18 +72,29 @@ namespace ElectronicPrescription.Controllers
 
         // GET: api/Drugs/5/Medicines
         [HttpGet("{id}/Medicines")]
-        public IEnumerable<MedicineDTO> GetMedicinesByDrug([FromRoute] int id)
+        public async Task<IActionResult> GetMedicinesByDrug([FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            var medicines = _context.Drug.Where(d => d.DrugId == id).SelectMany(d => d.Presentation)
-                        .Select(pr => pr.Medicine).Distinct().Select(m =>
-                        new MedicineDTO()
-                        {
-                            MedicineId = m.MedicineId,
-                            Name = m.Name
-                        });
+            var drugs = await _context.Drug.Include(d => d.Medicine).SingleOrDefaultAsync(d => d.DrugId == id);
 
-            return medicines;
+            if (drugs == null)
+            {
+                return NotFound();
+            }
+
+            var medicines = drugs.Medicine.Select(m =>
+                new MedicineDTO()
+                {
+                    MedicineId = m.MedicineId,
+                    Name = m.Name
+                }
+            );
+
+            return Ok(medicines);
         }
 
         // GET: api/Drugs/5/Presentations

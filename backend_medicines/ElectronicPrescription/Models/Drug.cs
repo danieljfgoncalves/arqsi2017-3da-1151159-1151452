@@ -12,5 +12,7 @@ namespace ElectronicPrescription.Models
         public String Name { get; set; }
 
         public ICollection<Presentation> Presentation { get; set; }
+
+        public ICollection<Medicine> Medicine { get; set; }
     }
 }

@@ -13,8 +13,7 @@ namespace ElectronicPrescription.Data
             context.Database.EnsureCreated();
 
             // Look for any data.
-            if (context.MedicalReceipt.Any() || context.Prescription.Any() 
-                || context.Presentation.Any() || context.Medicine.Any() 
+            if ( context.Presentation.Any() || context.Medicine.Any() 
                 || context.Posology.Any() || context.Drug.Any() 
                 || context.PackageLeaflet.Any())
             {
@@ -35,9 +34,9 @@ namespace ElectronicPrescription.Data
 
             var medicines = new Medicine[]
             {
-                new Medicine{ Name = "Kivexa" },
-                new Medicine{ Name = "Abederil" },
-                new Medicine{ Name = "Lombalgina" }
+                new Medicine{ Name = "Kivexa", DrugId = 1 },
+                new Medicine{ Name = "Abederil", DrugId = 2 },
+                new Medicine{ Name = "Lombalgina", DrugId = 3 }
             };
             foreach (Medicine m in medicines)
             {
@@ -59,9 +58,9 @@ namespace ElectronicPrescription.Data
 
             var presentations = new Presentation[]
             {
-                new Presentation{ Form = "injection", Concentration = 14.2f, Quantity = 14, MedicineId = 1, DrugId = 1 },
-                new Presentation{ Form = "tablet", Concentration = 22.5f, Quantity = 9, MedicineId = 2, DrugId = 2 },
-                new Presentation{ Form = "syrup", Concentration = 101.9f, Quantity = 14, MedicineId = 3, DrugId = 3 }
+                new Presentation{ Form = "injection", Concentration = 14.2f, Quantity = 14, DrugId = 1 },
+                new Presentation{ Form = "tablet", Concentration = 22.5f, Quantity = 9, DrugId = 2 },
+                new Presentation{ Form = "syrup", Concentration = 101.9f, Quantity = 14, DrugId = 3 }
             };
             foreach (Presentation p in presentations)
             {
@@ -78,32 +77,6 @@ namespace ElectronicPrescription.Data
             foreach (PackageLeaflet pf in packageLeaflets)
             {
                 context.PackageLeaflet.Add(pf);
-            }
-            context.SaveChanges();
-
-            var medicalReceipts = new MedicalReceipt[]
-            {
-                new MedicalReceipt{ CreationDate = DateTime.Parse("2017-10-14")},
-                new MedicalReceipt{ CreationDate = DateTime.Parse("2017-08-20")}
-            };
-            foreach (MedicalReceipt mr in medicalReceipts)
-            {
-                context.MedicalReceipt.Add(mr);
-            }
-            context.SaveChanges();
-
-            var prescriptions = new Prescription[]
-            {
-                new Prescription{ ExpirationDate = DateTime.Parse("2018-01-05"),
-                    MedicalReceiptId = 1, PresentationId = 1, PosologyId = 1 },
-                new Prescription{ ExpirationDate = DateTime.Parse("2017-12-10"),
-                    MedicalReceiptId = 2, PresentationId = 2, PosologyId = 2 },
-                new Prescription{ ExpirationDate = DateTime.Parse("2017-11-11"),
-                    MedicalReceiptId = 2, PresentationId = 3, PosologyId = 3 }
-            };
-            foreach (Prescription p in prescriptions)
-            {
-                context.Prescription.Add(p);
             }
             context.SaveChanges();
         }

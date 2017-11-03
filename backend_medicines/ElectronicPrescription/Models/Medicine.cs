@@ -11,6 +11,8 @@ namespace ElectronicPrescription.Models
 
         public String Name { get; set; }
 
-        public ICollection<Presentation> Presentation { get; set; }
+        public int? DrugId { get; set; }
+
+        public Drug Drug { get; set; }
     }
 }
