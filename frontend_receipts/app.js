@@ -7,7 +7,10 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
 // FIXME deploy on Azure
-mongoose.connect('mongodb://127.0.0.1:27017');
+mongoose.connect('mongodb://127.0.0.1:27017', {
+  useMongoClient: true,
+  /* other options */
+});
 
 // import routes
 var index = require('./routes/index');
