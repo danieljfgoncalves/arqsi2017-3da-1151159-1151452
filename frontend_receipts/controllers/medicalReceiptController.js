@@ -100,3 +100,25 @@ exports.delete_medical_receipt = function(req, res) {
         res.json({ message: 'Medical Receipt Deleted' });
     });
 }
+
+// GET /api/MedicalReceipts/{id}/Prescriptions
+exports.get_prescriptions_by_id = function(req, res) {
+
+    MedicalReceipt.findById(req.params.id, function (err, medicalReceipt) {
+        if (err) {
+            res.send(err);
+        }
+
+        if (req.roles.includes(roles.Role.ADMIN) ||
+            req.roles.includes(roles.Role.PHYSICIAN) ||
+            req.roles.includes(roles.Role.PHARMACIST)) {
+
+            res.status(200).json(medicalReceipt.prescriptions);
+        } else if ( req.roles.includes(roles.Role.PATIENT) &&
+                    req.userID == medicalReceipt.patient    ) {
+            res.status(200).json(medicalReceipt.prescriptions);
+        } else {
+            res.status(401).send('Unauthorized User.');
+        }
+    });
+}
