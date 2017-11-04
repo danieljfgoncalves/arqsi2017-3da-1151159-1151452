@@ -17,7 +17,7 @@ router.get('/medicalReceipts', medical_receipts_controller.get_medical_receipts_
 router.get('/medicalReceipts/:id', medical_receipts_controller.get_medical_receipt);
 
 // POST /app/medicalReceipts
-router.post('/medicalReceipts', medical_receipts_controller.post_medical_receipt);
+router.post('/medicalReceipts', middlewares.authenticateToMedicinesBackend, medical_receipts_controller.post_medical_receipt);
 
 // PUT /app/medical_receipts/<id>
 router.put('/medicalReceipts/:id', medical_receipts_controller.put_medical_receipt);
