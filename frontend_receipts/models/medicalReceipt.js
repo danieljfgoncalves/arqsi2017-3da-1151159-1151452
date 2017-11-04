@@ -27,6 +27,8 @@ var PrescriptionSchema = new Schema({
     fills: [ FillSchema ]
 });
 var MedicalReceiptSchema = new Schema({
+    pyshician: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    patient: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     creationDate: Date,
     prescriptions: [ PrescriptionSchema ]
 });

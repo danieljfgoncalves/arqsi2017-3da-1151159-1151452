@@ -18,6 +18,7 @@ exports.authenticateToken = function(req, res, next) {
             } else {
                 // if everything is good, save roles to request for use in other routes
                 req.roles = decoded.roles;
+                req.userID = decoded.userID;
                 next();
             }
         });
