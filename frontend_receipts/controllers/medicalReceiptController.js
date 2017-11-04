@@ -4,7 +4,7 @@ var MedicalReceipt = require('../models/medicalReceipt');
 
 // TODO: Authenticate each route according to role permissions.
 
-// GET /app/medicalReceipts
+// GET /api/medicalReceipts
 exports.get_medical_receipts_list = function(req, res) {
     
     if (    req.roles.includes(roles.Role.ADMIN)     || 
@@ -24,11 +24,24 @@ exports.get_medical_receipts_list = function(req, res) {
 
 // GET /api/medicalReceipts/<id>
 exports.get_medical_receipt = function(req, res) {
+
     MedicalReceipt.findById(req.params.id, function(err, medicalReceipt) {
         if (err) {
             res.send(err);
         }
-        res.json(medicalReceipt);
+
+        if (req.roles.includes(roles.Role.ADMIN) ||
+            req.roles.includes(roles.Role.PHYSICIAN) ||
+            req.roles.includes(roles.Role.PHARMACIST)) {
+
+            res.status(200).json(medicalReceipt);
+        } else if ( req.roles.includes(roles.Role.PATIENT) &&
+                    req.userID == medicalReceipt.patient    ) {
+
+            res.status(200).json(medicalReceipt);
+        } else {
+            res.status(401).send('Unauthorized User.');
+        }
     });
 };
 

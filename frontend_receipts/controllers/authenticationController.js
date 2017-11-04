@@ -56,7 +56,8 @@ exports.postAuthentication = function (req, res) {
                 // create a token with only our given payload
                 // we don't want to pass in the entire user since that has the password
                 const payload = {
-                    roles: user.roles
+                    roles: user.roles,
+                    userID: user._id
                 };
                 var token = jwt.sign(payload, config.secret, {
                     expiresIn: config.token_duration
