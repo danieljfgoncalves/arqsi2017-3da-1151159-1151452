@@ -1,25 +1,27 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+var express       = require('express');
+var path          = require('path');
+var favicon       = require('serve-favicon');
+var logger        = require('morgan');
+var cookieParser  = require('cookie-parser');
+var bodyParser    = require('body-parser');
+var mongoose      = require('mongoose');
+var config        = require('./config'); // get our config file
+var jwt           = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
-// FIXME deploy on Azure
-mongoose.connect('mongodb://127.0.0.1:27017', {
+mongoose.connect(config.database, {
   useMongoClient: true,
   /* other options */
 });
 
 // import routes
-var index = require('./routes/index');
-var users = require('./routes/users');
+var index           = require('./routes/index');
+var users           = require('./routes/users');
 var medicalReceipts = require('./routes/medicalReceipts');
+var authentication  = require('./routes/authentication'); 
 
 var app = express();
 
-// view engine setup
+// FIXME: view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -33,7 +35,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
-app.use('/app', medicalReceipts);
+app.use('/api/', medicalReceipts);
+app.use('/api/', authentication);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

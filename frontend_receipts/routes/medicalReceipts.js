@@ -1,11 +1,14 @@
 // routes/medicalReceipts.js
 
-var express = require('express');
-var router = express.Router();
+var express     = require('express');
+var router      = express.Router();
+var middlewares = require('../middleware');
 
 // Require controller modules
 var medical_receipts_controller = require('../controllers/medicalReceiptController');
 
+// Add Authentication middleware
+router.use('/medicalReceipts', middlewares.authenticateToken);
 
 // GET /app/medical_receipts
 router.get('/medicalReceipts', medical_receipts_controller.get_medical_receipts_list);

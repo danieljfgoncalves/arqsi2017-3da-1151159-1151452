@@ -1,15 +1,25 @@
 // controllers/medicalReceiptController.js
-
+var roles = require('../models/roles');
 var MedicalReceipt = require('../models/medicalReceipt');
+
+// TODO: Authenticate each route according to role permissions.
 
 // GET /app/medicalReceipts
 exports.get_medical_receipts_list = function(req, res) {
-    MedicalReceipt.find(function(err, medicalReceipts) {
-        if (err) {
-            res.send(err);
-        }
-        res.json(medicalReceipts);
-    });
+    
+    if (    req.roles.includes(roles.Role.ADMIN)     || 
+            req.roles.includes(roles.Role.PHYSICIAN) || 
+            req.roles.includes(roles.Role.PHARMACIST    )) {
+        
+        MedicalReceipt.find(function(err, medicalReceipts) {
+            if (err) {
+                res.status(500).send(err);
+            }
+            res.status(200).json(medicalReceipts);
+        });
+    } else {
+        res.status(401).send('Unauthorized User.');
+    }
 };
 
 // GET /app/medicalReceipts/<id>
