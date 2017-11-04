@@ -22,7 +22,7 @@ exports.get_medical_receipts_list = function(req, res) {
     }
 };
 
-// GET /app/medicalReceipts/<id>
+// GET /api/medicalReceipts/<id>
 exports.get_medical_receipt = function(req, res) {
     MedicalReceipt.findById(req.params.id, function(err, medicalReceipt) {
         if (err) {
@@ -32,10 +32,16 @@ exports.get_medical_receipt = function(req, res) {
     });
 };
 
-// POST /app/medicalReceipts
+// POST /api/medicalReceipts
 exports.post_medical_receipt = function(req, res) {
     var medicalReceipt = new MedicalReceipt();
+
     medicalReceipt.creationDate = req.body.creationDate;
+
+    var prescriptionsLength = req.body.prescriptions.length;
+    for (var i = 0; i < prescriptionsLength; i++) {
+        medicalReceipt.prescriptions.push(req.body.prescriptions[i]);
+    }
 
     // save the medical receipt and check for errors
     medicalReceipt.save(function(err) {
@@ -46,13 +52,19 @@ exports.post_medical_receipt = function(req, res) {
     });
 };
 
-// PUT /app/medicalReceipts/<id>
+// PUT /api/medicalReceipts/<id>
 exports.put_medical_receipt = function(req, res) {
     MedicalReceipt.findById(req.params.id, function(err, medicalReceipt) {
         if (err) {
             res.send(err);
         }
+
         medicalReceipt.creationDate = req.body.creationDate;
+
+        var prescriptionsLength = req.body.prescriptions.length;
+        for (var i = 0; i < prescriptionsLength; i++) {
+            medicalReceipt.prescriptions.push(req.body.prescriptions[i]);
+        }
 
         // save the medical receipt and check for errors
         medicalReceipt.save(function(err) {
@@ -64,7 +76,7 @@ exports.put_medical_receipt = function(req, res) {
     });
 };
 
-// DELETE /app/medicalReceipts/<id>
+// DELETE /api/medicalReceipts/<id>
 exports.delete_medical_receipt = function(req, res) {
     MedicalReceipt.remove({
         _id: req.params.id
