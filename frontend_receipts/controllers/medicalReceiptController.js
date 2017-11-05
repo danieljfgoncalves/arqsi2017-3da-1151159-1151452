@@ -220,3 +220,44 @@ exports.get_prescriptions_by_id = function(req, res) {
         }
     });
 }
+
+// POST /api/MedicalReceipts/{id1}/Prescriptions/{id2}/Fills
+exports.post_fill_prescription = (req, res) => {
+    if ( !( req.roles.includes(roles.Role.ADMIN) || 
+        req.roles.includes(roles.Role.PHARMACIST) ) ) {
+
+        res.status(401).send('Unauthorized User.');
+        return;
+    }
+
+    MedicalReceipt.findById(req.params.id1, (err, medicalReceipt) => {
+        if (err) {
+            res.send(err);
+            return;
+        }
+
+        var prescription = medicalReceipt._doc.prescriptions.find(e => e._id == req.params.id2);
+        if (!prescription) {
+            res.status(404).send("The prescription doesn't exists.");
+            return;
+        }
+
+        var availableFills = prescription._doc.presentation.quantity;
+        prescription._doc.fills.forEach( element => {
+            availableFills -= element.quantity;
+        });
+
+        if (req.body.quantity > availableFills) {
+            res.status(400).send("The quantity is bigger than the available.");
+            return;
+        }
+
+        prescription._doc.fills.push(req.body);
+        medicalReceipt.save(function(err) {
+            if (err) {
+                res.send(err);
+            }
+            res.json({ message: 'Medical Receipt Updated!' });
+        });
+    });
+}

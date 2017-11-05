@@ -28,5 +28,11 @@ router.delete('/medicalReceipts/:id', medical_receipts_controller.delete_medical
 // GET /api/MedicalReceipts/{id}/Prescriptions
 router.get('/medicalReceipts/:id/prescriptions', medical_receipts_controller.get_prescriptions_by_id);
 
+// POST /api/MedicalReceipts/{id1}/Prescriptions/{id2}/Fills
+router.post('/medicalReceipts/:id1/prescriptions/:id2/fills', medical_receipts_controller.post_fill_prescription);
+
+// PUT /api/MedicalReceipts/{id1}/Prescriptions/{id2}/Fills
+router.put('/medicalReceipts/:id1/prescriptions/:id2/fills', medical_receipts_controller.post_fill_prescription);
+
 
 module.exports = router;

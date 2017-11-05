@@ -9,7 +9,7 @@ var PresentationSchema = new Schema({
     quantity: Number
 });
 var FillSchema = new Schema({
-    date: Date,
+    date: { type: Date, default: Date.now },
     quantity: Number
 });
 var PrescribedPosologySchema = new Schema({
