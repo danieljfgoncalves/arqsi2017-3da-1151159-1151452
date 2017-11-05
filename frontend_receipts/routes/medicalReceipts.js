@@ -28,8 +28,9 @@ router.delete('/medicalReceipts/:id', medical_receipts_controller.delete_medical
 // GET /api/medicalReceipts/{id}/Prescriptions
 router.get('/medicalReceipts/:id/prescriptions', medical_receipts_controller.get_prescriptions_by_id);
 
-// POST /api/medicalReceipts/{id1}/Prescriptions/{id2}
-router.post('/medicalReceipts/:id/prescriptions', medical_receipts_controller.post_prescription);
+// POST /api/medicalReceipts/{id1}/Prescriptions/
+router.post('/medicalReceipts/:id/prescriptions', middlewares.authenticateToMedicinesBackend, medical_receipts_controller.post_prescription);
+
 // POST /api/MedicalReceipts/{id1}/Prescriptions/{id2}/Fills
 router.post('/medicalReceipts/:id1/prescriptions/:id2/fills', medical_receipts_controller.post_fill_prescription);
 

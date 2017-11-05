@@ -2,15 +2,12 @@
 
 var roles = require('../models/roles');
 var MedicalReceipt = require('../models/medicalReceipt');
-<<<<<<< HEAD
-var nodeRestClient = require('node-rest-client');
-var config = require('../config'); // get our config file
-=======
 var config = require('../config');
 var nodeRestClient = require('node-rest-client');
-var async = require("async");
+var async = require('async');
+var medicinesClient = require('../medicinesApiClient');
+var Promise = require('bluebird');
 
->>>>>>> fb9c326205f9b42ca31bce201e0dddfe6e1b998f
 
 // TODO: Authenticate each route according to role permissions.
 
@@ -273,7 +270,6 @@ exports.post_prescription = function (req, res) {
     if (!(req.roles.includes(roles.Role.ADMIN) ||
         req.roles.includes(roles.Role.PHYSICIAN))) 
     {
-
         res.status(401).send('Unauthorized User.');
         return;
     }
@@ -282,91 +278,43 @@ exports.post_prescription = function (req, res) {
             res.send(err);
         }
 
-        var client = new nodeRestClient.Client();
         var args = {
             data: { "Email": config.medicines_backend.email, "Password": config.medicines_backend.secret },
             headers: { "Authorization": "Bearer ".concat(req.token), "Content-Type": "application/json" }
         };
 
-        var expirationDate, drug, medicine, quantityPosology, technique,
-            interval, period, form, concentration, quantityPresentation;
-
-        expirationDate = req.body.expirationDate;
-
-        new Promise((resolve, reject) => {
-            var presentationId = req.body.presentation;
-            var url = config.medicines_backend.url.concat("/Presentations/").concat(presentationId);
-            client.get(url, args, (data, response) => {
-                console.log(data);
-                resolve(data);
-            });
-        })
-            .then(presentationObj => {
-                form = presentationObj.form;
-                concentration = presentationObj.concentration;
-                quantityPresentation = presentationObj.quantity;
-
-                var drugId = req.body.drug;
-                var url = config.medicines_backend.url.concat("/Drugs/").concat(drugId);
-                return new Promise((resolve, reject) => {
-                    client.get(url, args, (data, response) => {
-                        resolve(data);
-                    });
-                });
-            })
-            .then(drugObj => {
-                drug = drugObj.name;
-
-                var posologyId = req.body.posology;
-                var url = config.medicines_backend.url.concat("/Posologies/").concat(posologyId);
-                return new Promise((resolve, reject) => {
-                    client.get(url, args, (data, response) => {
-                        resolve(data);
-                    });
-                });
-            })
-            .then(posologyObj => {
-                quantityPosology = posologyObj.quantity;
-                technique = posologyObj.technique;
-                interval = posologyObj.interval;
-                period = posologyObj.period;
-
-                var medicineId = req.body.medicine;
-                var url = config.medicines_backend.url.concat("/Medicines/").concat(medicineId);
-                return new Promise((resolve, reject) => {
-                    client.get(url, args, (data, response) => {
-                        resolve(data);
-                    });
-                });
-            })
-            .then(medicineObj => {
-                medicine = medicineObj.name;
+        Promise.join(
+            medicinesClient.getDrug(args, req.body.drug),
+            medicinesClient.getMedicine(args, req.body.medicine),
+            medicinesClient.getPresentation(args, req.body.presentation),
+            medicinesClient.getPosology(args, req.body.posology),
+            function(drug, medicine, presentation, posology) {
 
                 var prescription = {
-                    "expirationDate": expirationDate,
-                    "drug": drug,
-                    "medicine": medicine,
+                    "expirationDate": req.body.expirationDate,
+                    "drug": drug.name,
+                    "medicine": medicine.name,
                     "prescribedPosology": {
-                        "quantity": quantityPosology,
-                        "technique": technique,
-                        "interval": interval,
-                        "period": period
+                        "quantity": posology.quantity,
+                        "technique": posology.technique,
+                        "interval": posology.interval,
+                        "period": posology.period
                     },
                     "presentation": {
-                        "form": form,
-                        "concentration": concentration,
-                        "quantity": quantityPresentation
+                        "form": presentation.form,
+                        "concentration": presentation.concentration,
+                        "quantity": presentation.quantity
                     }
                 };
                 medicalReceipt.prescriptions.push(prescription);
-
+                // save the medical receipt and check for errors
                 medicalReceipt.save(err => {
                     if (err) {
                         res.status(500).send(err);
                     }
-                    res.status(201).json({ message: 'Prescription Created & Added to Receipt!' });
+                    res.status(201).json({ message: 'Prescription Created & Added to Medical Receipt!' });
                 });
-            });
+            })
     });
 
 }        
