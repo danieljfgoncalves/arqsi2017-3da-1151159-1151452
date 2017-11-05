@@ -14,9 +14,9 @@ var FillSchema = new Schema({
 });
 var PrescribedPosologySchema = new Schema({
     quantity: String,
-    Technique: String,
-    Interval: String,
-    Period: String
+    technique: String,
+    interval: String,
+    period: String
 });
 var PrescriptionSchema = new Schema({
     expirationDate: Date,
@@ -29,7 +29,7 @@ var PrescriptionSchema = new Schema({
 var MedicalReceiptSchema = new Schema({
     pyshician: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     patient: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    creationDate: Date,
+    creationDate: { type: Date, default: Date.now },
     prescriptions: [ PrescriptionSchema ]
 });
 
