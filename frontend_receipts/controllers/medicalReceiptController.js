@@ -1,4 +1,5 @@
 // controllers/medicalReceiptController.js
+
 var roles = require('../models/roles');
 var MedicalReceipt = require('../models/medicalReceipt');
 var config = require('../config');

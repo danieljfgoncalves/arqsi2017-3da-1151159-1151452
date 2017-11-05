@@ -17,6 +17,7 @@ mongoose.connect(config.database, {
 var index           = require('./routes/index');
 var users           = require('./routes/users');
 var medicalReceipts = require('./routes/medicalReceipts');
+var patients        = require('./routes/patients');
 var authentication  = require('./routes/authentication'); 
 
 var app = express();
@@ -36,6 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/api/', medicalReceipts);
+app.use('/api/', patients);
 app.use('/api/', authentication);
 
 // catch 404 and forward to error handler
