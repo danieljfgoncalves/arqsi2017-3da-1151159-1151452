@@ -20,7 +20,7 @@ router.get('/medicalReceipts/:id', medical_receipts_controller.get_medical_recei
 router.post('/medicalReceipts', middlewares.authenticateToMedicinesBackend, medical_receipts_controller.post_medical_receipt);
 
 // PUT /api/medicalReceipts/{id}
-router.put('/medicalReceipts/:id', medical_receipts_controller.put_medical_receipt);
+router.put('/medicalReceipts/:id', middlewares.authenticateToMedicinesBackend, medical_receipts_controller.put_medical_receipt);
 
 // DELETE /api/medicalReceipts/{id}
 router.delete('/medicalReceipts/:id', medical_receipts_controller.delete_medical_receipt);

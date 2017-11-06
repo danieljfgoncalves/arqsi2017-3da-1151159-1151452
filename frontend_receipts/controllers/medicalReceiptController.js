@@ -29,7 +29,7 @@ exports.get_medical_receipts_list = function(req, res) {
     }
 };
 
-// GET /api/medicalReceipts/<id>
+// GET /api/medicalReceipts/{id}
 exports.get_medical_receipt = function(req, res) {
 
     MedicalReceipt.findById(req.params.id, function(err, medicalReceipt) {
@@ -74,86 +74,38 @@ exports.post_medical_receipt = function(req, res) {
         req.body.prescriptions,
         
         (item, callback) => {
-            var client = new nodeRestClient.Client();
+
             var args = {
-                data: { "Email":config.medicines_backend.email, "Password":config.medicines_backend.secret },
-                headers: { "Authorization":"Bearer ".concat(req.token), "Content-Type": "application/json" }
+                data: { "Email": config.medicines_backend.email, "Password": config.medicines_backend.secret },
+                headers: { "Authorization": "Bearer ".concat(req.token), "Content-Type": "application/json" }
             };
-            
-            var expirationDate, drug, medicine, quantityPosology, technique, 
-                interval, period, form, concentration, quantityPresentation;
-            
-            expirationDate = item.expirationDate;
 
-            var promise = new Promise( (resolve, reject) => {
-                var presentationId = item.presentation;
-                var url = config.medicines_backend.url.concat("/Presentations/").concat(presentationId);
-                client.get(url, args, (data, response) => {
-                    resolve(data);
-                });
-            })
-            .then( presentationObj => {
-                form = presentationObj.form;
-                concentration = presentationObj.concentration;
-                quantityPresentation = presentationObj.quantity;
+            Promise.join(
+                medicinesClient.getDrug(args, item.drug),
+                medicinesClient.getMedicine(args, item.medicine),
+                medicinesClient.getPresentation(args, item.presentation),
+                medicinesClient.getPosology(args, item.posology),
+                function (drug, medicine, presentation, posology) {
 
-                var drugId = item.drug;
-                var url = config.medicines_backend.url.concat("/Drugs/").concat(drugId);
-                return new Promise((resolve, reject) => {
-                    client.get(url, args, (data, response) => {
-                        resolve(data);
-                    });
-                });
-            })
-            .then( drugObj => {
-                drug = drugObj.name;
-
-                var posologyId = item.posology;
-                var url = config.medicines_backend.url.concat("/Posologies/").concat(posologyId);
-                return new Promise((resolve, reject) => {
-                    client.get(url, args, (data, response) => {
-                        resolve(data);
-                    });
-                });
-            })
-            .then( posologyObj => {
-                quantityPosology = posologyObj.quantity;
-                technique = posologyObj.technique;
-                interval = posologyObj.interval;
-                period = posologyObj.period;
-
-                var medicineId = item.medicine;
-                var url = config.medicines_backend.url.concat("/Medicines/").concat(medicineId);
-                return new Promise((resolve, reject) => {
-                    client.get(url, args, (data, response) => {
-                        resolve(data);
-                    });
-                });
-            })
-            .then( medicineObj => {
-                medicine = medicineObj.name;
-
-                var prescription = {
-                    "expirationDate": expirationDate,
-                    "drug": drug,
-                    "medicine": medicine,
-                    "prescribedPosology": {
-                        "quantity": quantityPosology,
-                        "technique": technique,
-                        "interval": interval,
-                        "period": period
-                    },
-                    "presentation": {
-                        "form": form,
-                        "concentration": concentration,
-                        "quantity": quantityPresentation
-                    }
-                };
-                medicalReceipt.prescriptions.push(prescription);
-
-                callback();
-            });
-
+                    var prescription = {
+                        "expirationDate": item.expirationDate,
+                        "drug": drug.name,
+                        "medicine": medicine.name,
+                        "prescribedPosology": {
+                            "quantity": posology.quantity,
+                            "technique": posology.technique,
+                            "interval": posology.interval,
+                            "period": posology.period
+                        },
+                        "presentation": {
+                            "form": presentation.form,
+                            "concentration": presentation.concentration,
+                            "quantity": presentation.quantity
+                        }
+                    };
+                    medicalReceipt.prescriptions.push(prescription);
+                    callback();
+                })
         },
         (error) => {
             // save the medical receipt and check for errors
@@ -166,31 +118,68 @@ exports.post_medical_receipt = function(req, res) {
         });
 };
 
-// PUT /api/medicalReceipts/<id>
-exports.put_medical_receipt = function(req, res) {
-    MedicalReceipt.findById(req.params.id, function(err, medicalReceipt) {
-        if (err) {
-            res.send(err);
-        }
+// PUT /api/medicalReceipts/{id}
+exports.put_medical_receipt = function (req, res) {
 
-        medicalReceipt.creationDate = req.body.creationDate;
+    var cdate = new Date();
+    if (req.body.creationDate) cdate = req.body.creationDate;
 
-        var prescriptionsLength = req.body.prescriptions.length;
-        for (var i = 0; i < prescriptionsLength; i++) {
-            medicalReceipt.prescriptions.push(req.body.prescriptions[i]);
-        }
+    var newPrescriptions = [];
+    async.each(
+        req.body.prescriptions,
 
-        // save the medical receipt and check for errors
-        medicalReceipt.save(function(err) {
-            if (err) {
-                res.send(err);
-            }
-            res.json({ message: 'Medical Receipt Updated!' });
+        (item, callback) => {
+
+            var args = {
+                data: { "Email": config.medicines_backend.email, "Password": config.medicines_backend.secret },
+                headers: { "Authorization": "Bearer ".concat(req.token), "Content-Type": "application/json" }
+            };
+
+            Promise.join(
+                medicinesClient.getDrug(args, item.drug),
+                medicinesClient.getMedicine(args, item.medicine),
+                medicinesClient.getPresentation(args, item.presentation),
+                medicinesClient.getPosology(args, item.posology),
+                function (drug, medicine, presentation, posology) {
+
+                    var prescription = {
+                        "expirationDate": item.expirationDate,
+                        "drug": drug.name,
+                        "medicine": medicine.name,
+                        "prescribedPosology": {
+                            "quantity": posology.quantity,
+                            "technique": posology.technique,
+                            "interval": posology.interval,
+                            "period": posology.period
+                        },
+                        "presentation": {
+                            "form": presentation.form,
+                            "concentration": presentation.concentration,
+                            "quantity": presentation.quantity
+                        }
+                    };
+                    newPrescriptions.push(prescription);
+                    callback();
+                })
+        },
+        (error) => {
+            // update the medical receipt and check for errors
+            MedicalReceipt.findOneAndUpdate({ _id: req.params.id }, {
+                pyshician: req.userID,
+                patient: req.body.patient,
+                creationDate: cdate,
+                prescriptions: newPrescriptions
+            }, err => {
+
+                if (err) {
+                    res.status(500).send(err);
+                }
+                res.status(200).send('Medical Receipt Updated!');
+            });
         });
-    });
-};
+}
 
-// DELETE /api/medicalReceipts/<id>
+// DELETE /api/medicalReceipts/{id}
 exports.delete_medical_receipt = function(req, res) {
     MedicalReceipt.remove({
         _id: req.params.id
@@ -250,7 +239,7 @@ exports.post_fill_prescription = (req, res) => {
         });
 
         if (req.body.quantity > availableFills) {
-            res.status(400).send("The quantity is bigger than the available.");
+            res.status(400).send("The quantity is bigger than the available [Remaining: " + availableFills + "].");
             return;
         }
 
