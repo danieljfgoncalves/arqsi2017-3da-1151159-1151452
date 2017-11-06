@@ -34,6 +34,9 @@ router.post('/medicalReceipts/:id/prescriptions', middlewares.authenticateToMedi
 // GET /api/medicalReceipts/{id}/Prescriptions/{id}
 router.get('/medicalReceipts/:receiptId/prescriptions/:prescId', medical_receipts_controller.get_prescription_by_id);
 
+// PUT /api/medicalReceipts/{id}/Prescriptions/{id}
+router.put('/medicalReceipts/:receiptId/prescriptions/:prescId', middlewares.authenticateToMedicinesBackend, medical_receipts_controller.put_prescription_by_id);
+
 // POST /api/MedicalReceipts/{id1}/Prescriptions/{id2}/Fills
 router.post('/medicalReceipts/:id1/prescriptions/:id2/fills', medical_receipts_controller.post_fill_prescription);
 

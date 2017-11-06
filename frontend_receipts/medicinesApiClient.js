@@ -5,6 +5,8 @@ var client = new nodeRestClient.Client();
 
 exports.getPresentation = function(args, presentationId) {
 
+    if (presentationId == null) return;
+
     return new Promise((resolve, reject) => {
         
         var url = config.medicines_backend.url.concat("/Presentations/").concat(presentationId);
@@ -15,6 +17,8 @@ exports.getPresentation = function(args, presentationId) {
 }
 
 exports.getDrug = function(args, drugId) {
+
+    if(drugId == null) return;
 
     return new Promise((resolve, reject) => {
 
@@ -27,6 +31,8 @@ exports.getDrug = function(args, drugId) {
 
 exports.getPosology = function (args, posologyId) {
 
+    if (posologyId == null) return;
+
     return new Promise((resolve, reject) => {
 
         var url = config.medicines_backend.url.concat("/Posologies/").concat(posologyId);
@@ -38,6 +44,8 @@ exports.getPosology = function (args, posologyId) {
 
 exports.getMedicine = function (args, medicineId) {
 
+    if (medicineId == null) return;
+
     return new Promise((resolve, reject) => {
 
         var url = config.medicines_backend.url.concat("/Medicines/").concat(medicineId);
@@ -46,11 +54,3 @@ exports.getMedicine = function (args, medicineId) {
         });
     })
 }
-
-// exports.getMed = new Promise((resolve, reject) => {
-
-//         var url = config.medicines_backend.url.concat("/Medicines/").concat(1);
-//         client.get(url, args, (data, response) => {
-//             resolve(data);
-//         });
-//     })

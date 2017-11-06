@@ -355,3 +355,78 @@ exports.get_prescription_by_id = function (req, res) {
         }
     });
 }
+
+// // PUT /api/medicalReceipts/{id}/Prescriptions/{id}
+exports.put_prescription_by_id = function (req, res) {
+
+    MedicalReceipt.findById(req.params.receiptId, function (err, medicalReceipt) {
+        if (err) {
+            res.status(500).send(err);
+        }
+
+        if (req.roles.includes(roles.Role.ADMIN) ||
+            req.roles.includes(roles.Role.PHYSICIAN) ||
+            req.roles.includes(roles.Role.PHARMACIST)) {
+
+            var prescription = medicalReceipt.prescriptions.id(req.params.prescId);
+
+            if (!prescription) {
+                res.status(404).send("The prescription doesn't exists.");
+                return;
+            } else if(prescription.fills.length > 0) {
+                res.status(401).send('The prescription has been filled & can\'t be changed');
+                return;
+            }
+
+            var args = {
+                data: { "Email": config.medicines_backend.email, "Password": config.medicines_backend.secret },
+                headers: { "Authorization": "Bearer ".concat(req.token), "Content-Type": "application/json" }
+            };
+
+            Promise.join(
+                medicinesClient.getDrug(args, req.body.drug),
+                medicinesClient.getMedicine(args, req.body.medicine),
+                medicinesClient.getPresentation(args, req.body.presentation),
+                medicinesClient.getPosology(args, req.body.posology),
+                function (drug, medicine, presentation, posology) {
+
+                    if (req.body.expirationDate) prescription.expirationDate = req.body.expirationDate;
+                    if (drug) prescription.drug = drug.name;
+                    if (medicine) {
+                        prescription.medicine = medicine.name;
+                    } else {
+                        prescription.medicine = undefined;
+                    }
+                    if (posology) {
+                        prescription.prescribedPosology = {
+                            "quantity": posology.quantity,
+                            "technique": posology.technique,
+                            "interval": posology.interval,
+                            "period": posology.period
+                        }
+                    }
+                    if (presentation) {
+                        prescription.presentation = {
+                            "form": presentation.form,
+                            "concentration": presentation.concentration,
+                            "quantity": presentation.quantity
+                        }
+                    }
+
+                    // // // Update prescription
+                    prescription.save(err => {
+                        if (err) res.status(500).send(err);
+                    });
+                    // update the medical receipt and check for errors
+                    medicalReceipt.save( err => {
+                        if (err) res.status(500).send(err);
+
+                        res.status(200).json({ message: 'Prescription was updated!' });
+                    });
+                })
+
+        } else {
+            res.status(401).send('Unauthorized User.');
+        }
+    });
+}
