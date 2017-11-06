@@ -14,11 +14,24 @@ var Promise = require('bluebird');
 // GET /api/medicalReceipts
 exports.get_medical_receipts_list = function(req, res) {
     
-    if (    req.roles.includes(roles.Role.ADMIN)     || 
-            req.roles.includes(roles.Role.PHYSICIAN) || 
-            req.roles.includes(roles.Role.PHARMACIST    )) {
+    if (req.roles.includes(roles.Role.ADMIN)) {
         
         MedicalReceipt.find(function(err, medicalReceipts) {
+            if (err) {
+                res.status(500).send(err);
+            }
+            res.status(200).json(medicalReceipts);
+        });
+    } else if (req.roles.includes(roles.Role.PHYSICIAN) || 
+               req.roles.includes(roles.Role.PATIENT)) {
+
+        var query;
+        if (req.roles.includes(roles.Role.PHYSICIAN)) {
+            query = {"physician":req.userID}
+        } else {
+            query = { "patient": req.userID }
+        }
+        MedicalReceipt.find(query,function (err, medicalReceipts) {
             if (err) {
                 res.status(500).send(err);
             }
@@ -38,12 +51,9 @@ exports.get_medical_receipt = function(req, res) {
         }
 
         if (req.roles.includes(roles.Role.ADMIN) ||
-            req.roles.includes(roles.Role.PHYSICIAN) ||
-            req.roles.includes(roles.Role.PHARMACIST)) {
-
-            res.status(200).json(medicalReceipt);
-        } else if ( req.roles.includes(roles.Role.PATIENT) &&
-                    req.userID == medicalReceipt.patient    ) {
+            req.roles.includes(roles.Role.PHARMACIST ||
+            (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
+            (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician) )) {
 
             res.status(200).json(medicalReceipt);
         } else {
@@ -63,10 +73,10 @@ exports.post_medical_receipt = function(req, res) {
 
     var medicalReceipt = new MedicalReceipt();
 
-    if (req.body.creationDate) {
-        medicalReceipt.creationDate = req.body.creationDate;
-    }
+    var cdate = new Date();
+    if (req.body.creationDate) cdate = req.body.creationDate;
 
+    medicalReceipt.creationDate = cdate;
     medicalReceipt.pyshician = req.userID;
     medicalReceipt.patient = req.body.patient;
 
@@ -121,6 +131,12 @@ exports.post_medical_receipt = function(req, res) {
 // PUT /api/medicalReceipts/{id}
 exports.put_medical_receipt = function (req, res) {
 
+    if  (req.roles.includes(roles.Role.ADMIN) ||
+        req.roles.includes(roles.Role.PHYSICIAN)) {
+        res.status(401).send('Unauthorized User.');
+        return;
+    }
+
     var cdate = new Date();
     if (req.body.creationDate) cdate = req.body.creationDate;
 
@@ -163,6 +179,17 @@ exports.put_medical_receipt = function (req, res) {
                 })
         },
         (error) => {
+            if (req.roles.includes(roles.Role.PHYSICIAN)) {
+                MedicalReceipt.findById(req.params.id, function (err, medicalReceipt) {
+                    if (err) {
+                        res.status(500).send(err);
+                    }
+                    if (req.userID != medicalReceipt.physician) {
+                        res.status(401).send('Unauthorized User.');
+                        return;
+                    }
+                });
+            }
             // update the medical receipt and check for errors
             MedicalReceipt.findOneAndUpdate({ _id: req.params.id }, {
                 pyshician: req.userID,
@@ -181,6 +208,12 @@ exports.put_medical_receipt = function (req, res) {
 
 // DELETE /api/medicalReceipts/{id}
 exports.delete_medical_receipt = function(req, res) {
+
+    if (!req.roles.includes(roles.Role.ADMIN)) {
+        res.status(401).send('Unauthorized User.');
+        return;
+    }
+
     MedicalReceipt.remove({
         _id: req.params.id
     }, function(err, medicalReceipt) {
@@ -200,12 +233,10 @@ exports.get_prescriptions_by_id = function(req, res) {
         }
 
         if (req.roles.includes(roles.Role.ADMIN) ||
-            req.roles.includes(roles.Role.PHYSICIAN) ||
-            req.roles.includes(roles.Role.PHARMACIST)) {
+            req.roles.includes(roles.Role.PHARMACIST ||
+            (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
+            (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician))) {
 
-            res.status(200).json(medicalReceipt.prescriptions);
-        } else if ( req.roles.includes(roles.Role.PATIENT) &&
-                    req.userID == medicalReceipt.patient    ) {
             res.status(200).json(medicalReceipt.prescriptions);
         } else {
             res.status(401).send('Unauthorized User.');
@@ -317,21 +348,11 @@ exports.get_prescription_by_id = function (req, res) {
         }
 
         if (req.roles.includes(roles.Role.ADMIN) ||
-            req.roles.includes(roles.Role.PHYSICIAN) ||
-            req.roles.includes(roles.Role.PHARMACIST)) {
+            req.roles.includes(roles.Role.PHARMACIST ||
+            (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
+            (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician))) {
 
             var prescription = medicalReceipt.prescriptions.id(req.params.prescId);
-
-            if (!prescription) {
-                res.status(404).send("The prescription doesn't exists.");
-                return;
-            }
-
-            res.status(200).json(prescription);
-        } else if (req.roles.includes(roles.Role.PATIENT) &&
-            req.userID == medicalReceipt.patient) {
-
-            var prescription = medicalReceipt.prescriptions.id(req.body.prescId);
 
             if (!prescription) {
                 res.status(404).send("The prescription doesn't exists.");
@@ -354,8 +375,7 @@ exports.put_prescription_by_id = function (req, res) {
         }
 
         if (req.roles.includes(roles.Role.ADMIN) ||
-            req.roles.includes(roles.Role.PHYSICIAN) ||
-            req.roles.includes(roles.Role.PHARMACIST)) {
+            (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician)) {
 
             var prescription = medicalReceipt.prescriptions.id(req.params.prescId);
 

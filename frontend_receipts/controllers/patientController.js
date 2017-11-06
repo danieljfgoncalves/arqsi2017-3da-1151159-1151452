@@ -6,7 +6,7 @@ var MedicalReceipt = require('../models/medicalReceipt');
 // GET /api/Patient/{id}/Prescriptions/tofill/{?data} 
 exports.get_prescriptions_to_fill_until_date = (req, res) => {
     if ( !( req.roles.includes(roles.Role.ADMIN) || 
-            req.roles.includes(roles.Role.PATIENT) ) ) {
+            (req.roles.includes(roles.Role.PATIENT ) && req.userID == req.params.id) ) ) {
 
         res.status(401).send('Unauthorized User.');
         return;
