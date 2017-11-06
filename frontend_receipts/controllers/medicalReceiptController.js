@@ -9,7 +9,7 @@ var medicinesClient = require('../medicinesApiClient');
 var Promise = require('bluebird');
 
 
-// TODO: Authenticate each route according to role permissions.
+// TODO: Review all roles as for requistes table.
 
 // GET /api/medicalReceipts
 exports.get_medical_receipts_list = function(req, res) {
@@ -317,4 +317,41 @@ exports.post_prescription = function (req, res) {
             })
     });
 
-}        
+} 
+
+// GET /api/medicalReceipts/{id}/Prescriptions/{id}
+exports.get_prescription_by_id = function (req, res) {
+
+    MedicalReceipt.findById(req.params.receiptId, function (err, medicalReceipt) {
+        if (err) {
+            res.status(500).send(err);
+        }
+
+        if (req.roles.includes(roles.Role.ADMIN) ||
+            req.roles.includes(roles.Role.PHYSICIAN) ||
+            req.roles.includes(roles.Role.PHARMACIST)) {
+
+            var prescription = medicalReceipt.prescriptions.id(req.params.prescId);
+
+            if (!prescription) {
+                res.status(404).send("The prescription doesn't exists.");
+                return;
+            }
+
+            res.status(200).json(prescription);
+        } else if (req.roles.includes(roles.Role.PATIENT) &&
+            req.userID == medicalReceipt.patient) {
+
+            var prescription = medicalReceipt.prescriptions.id(req.body.prescId);
+
+            if (!prescription) {
+                res.status(404).send("The prescription doesn't exists.");
+                return;
+            }
+
+            res.status(200).json(prescription);
+        } else {
+            res.status(401).send('Unauthorized User.');
+        }
+    });
+}
