@@ -5,7 +5,7 @@ var MedicalReceipt = require('../models/medicalReceipt');
 var config = require('../config');
 var nodeRestClient = require('node-rest-client');
 var async = require('async');
-var medicinesClient = require('../medicinesApiClient');
+var medicinesClient = require('../helpers/medicinesRequests');
 var Promise = require('bluebird');
 
 

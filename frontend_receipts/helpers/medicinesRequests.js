@@ -1,5 +1,5 @@
-// ./client.js
-var config = require('./config');
+// helpers/medicinesRequests.js
+var config = require('../config');
 var nodeRestClient = require('node-rest-client');
 var client = new nodeRestClient.Client();
 
