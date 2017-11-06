@@ -42,7 +42,7 @@ package "Iteração 2" <<cloud>> {
             creationDate
         }
         class PrescribedPosology
-        class PrescriptionFill {
+        class Fill {
             date
             quantity
         }
@@ -61,7 +61,7 @@ Drug "1" -- "*" Presentation
 Prescription "0,*" -> "0,1" Medicine
 note on link: optional
 
-Prescription "1" -- "*" PrescriptionFill
+Prescription "1" -- "*" Fill
 Prescription "1" -- "1" PrescribedPosology
 Presentation "1" - "*" PackageLeaflet
 PackageLeaflet "*" -- "1" Posology
