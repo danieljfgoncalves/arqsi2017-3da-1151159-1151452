@@ -1,30 +1,35 @@
-@startuml "dm_it2_global"
+@startuml "deploy_view_it2"
 
 ' Components
-node "w:Windows Server" {
-  database "SQL Database" {
-    [MedicinesDB]
-  }
-  folder "ASP.NET Service" {
-    [MedicinesBackend]
-  }
-
-  node "IIS Server" as iis
+package "1st Iteration" #009FBD {
+  
+  cloud "az: Azure Cloud Server\n" as az1 #white {
+    database "SQL Database" #DCDCDC {
+      [MedicinesDB]
+    }
+    folder "ASP.NET Service" {
+      [MedicinesBackend]
+    }
+}
 }
 
-cloud "az:Azure Cloud Server" {
-  database "MongoDB" {
-      [ReceiptsDB]
+package "2nd Iteration" #43CC72 {
+
+  cloud "az: Azure Cloud Server\n" as az2 #white {
+    folder "node.js Service" {
+        [ReceiptsFrontend]
+    }
   }
-  folder "node.js" {
-      [ReceiptsFrontend]
+
+  cloud "aws: AWS Cloud Server\n" as aws #white {
+    database "MongoDB" #DCDCDC {
+        [ReceiptsDB]
+    }
   }
 }
 
 ' Relations
-[MedicinesDB] .. [MedicinesBackend]
-[MedicinesBackend] .. iis
-[MedicinesBackend] . [ReceiptsFrontend]
-[ReceiptsFrontend] .. [ReceiptsDB]
-
+[MedicinesDB] . [MedicinesBackend]
+[MedicinesBackend] .. [ReceiptsFrontend]
+[ReceiptsFrontend] . [ReceiptsDB] : <back:#FFFFE0>connection</back>\n <img mlab-logo.png>
 @enduml
