@@ -19,6 +19,9 @@ exports.verifyRole = function (expression) {
             myRole = ROLE.ADMIN;
             break;
         case ROLE.PHYSICIAN:
+            myRole = ROLE.PHYSICIAN
+            break;
+        case ROLE.PHARMACIST:
             myRole = ROLE.PHARMACIST
             break;
         case ROLE.PATIENT:

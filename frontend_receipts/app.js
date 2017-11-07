@@ -8,19 +8,25 @@ var mongoose      = require('mongoose');
 var config        = require('./config'); // get our config file
 var jwt           = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
-mongoose.connect(config.database, {
-  useMongoClient: true,
-  /* other options */
-});
-
 // import routes
 var index           = require('./routes/index');
-var users           = require('./routes/users');
 var medicalReceipts = require('./routes/medicalReceipts');
 var patients        = require('./routes/patients');
 var authentication  = require('./routes/authentication'); 
 
 var app = express();
+
+// *** mongoose *** ///
+var mongoOptions = {
+  useMongoClient: true,
+};
+mongoose.connect(config.mongoURI[app.get('env')], mongoOptions, function (error) {
+  if (error) {
+    console.log('Error connecting to the database. ' + error);
+  } else {
+    console.log('Connected to Database: ' + config.mongoURI[app.settings.env]);
+  }
+});
 
 // FIXME: view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,14 +34,13 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+if (app.get('env') != 'test') app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
 app.use('/api/', medicalReceipts);
 app.use('/api/', patients);
 app.use('/api/', authentication);
