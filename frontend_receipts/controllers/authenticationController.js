@@ -13,10 +13,12 @@ exports.postRegistration = function (req, res) {
 
     // Verify roles
     var myRoles = new Set();
-    req.body.roles.forEach(function(element) {
-        var aRole = roles.verifyRole(element);
-        if(aRole != null) myRoles.add(aRole);
-    });
+    if (req.body.roles) {
+        req.body.roles.forEach(function (element) {
+            var aRole = roles.verifyRole(element);
+            if (aRole != null) myRoles.add(aRole);
+        });
+    }
     if(myRoles.size == 0) myRoles.add(roles.Role.PATIENT);
 
     User.create({
@@ -27,9 +29,8 @@ exports.postRegistration = function (req, res) {
     },
         function (err, user) {
             if (err) return res.status(500).send({ message:"There was a problem registering the user.", error: err});
-            
-            console.log("User [" + user.name + "] was successfully registered!")
-            res.status(200).send("User registered with success.");
+        
+            res.status(200).send("User [" + user.name + "] registered with success.");
     });
 }
 
@@ -44,7 +45,7 @@ exports.postAuthentication = function (req, res) {
         if (err) throw err;
 
         if (!user) {
-            res.json({ success: false, message: 'Authentication failed. User not found.' });
+            res.status(401).json({ success: false, message: 'Authentication failed. User not found.' });
         } else if (user) {
 
             // check if password matches

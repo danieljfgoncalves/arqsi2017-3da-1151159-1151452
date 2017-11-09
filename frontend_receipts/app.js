@@ -24,7 +24,7 @@ mongoose.connect(config.mongoURI[app.get('env')], mongoOptions, function (error)
   if (error) {
     console.log('Error connecting to the database. ' + error);
   } else {
-    console.log('Connected to Database: ' + config.mongoURI[app.settings.env]);
+    if (app.get('env') != 'test') console.log('Connected to Database: ' + config.mongoURI[app.settings.env]);
   }
 });
 

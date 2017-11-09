@@ -29,7 +29,7 @@ exports.medicalReceipt_1 = new Promise(resolve => {
         'creationDate': '2017-11-06T16:24:47.444Z'
     },
         function (err, user) { resolve(); });
-})
+}).catch(() => { });
 
 exports.medicalReceipt_2 = new Promise(resolve => {
 
@@ -59,4 +59,4 @@ exports.medicalReceipt_2 = new Promise(resolve => {
         'creationDate': '2017-11-06T18:24:47.444Z'
     },
         function (err, user) { resolve(); });
-})
+}).catch(() => { });

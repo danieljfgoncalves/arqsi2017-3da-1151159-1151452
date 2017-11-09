@@ -22,7 +22,6 @@ describe('TESTING: route [patients]', function () {
     var myToken;
 
     beforeEach(function (done) {
-        MedicalReciept.collection.drop().catch(() => { });
         var auth = new Promise(resolve =>{
             chai.request(server)
                 .post('/api/authenticate')
@@ -70,6 +69,7 @@ describe('TESTING: route [patients]', function () {
                 done();
             });
     });
+    // GET /api/Patients/{id}/Prescriptions/tofill/{?data}
     it('GET api/Patients/{id}/Prescriptions/tofill/?date= [should list 0 object]',
         function (done) {
             chai.request(server)
