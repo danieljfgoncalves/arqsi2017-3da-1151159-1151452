@@ -12,26 +12,30 @@ var Promise = require('bluebird');
 // TODO: Review all roles as for requistes table.
 
 // GET /api/medicalReceipts
-exports.get_medical_receipts_list = function(req, res) {
-    
+exports.get_medical_receipts_list = function (req, res) {
+
     if (req.roles.includes(roles.Role.ADMIN)) {
-        
-        MedicalReceipt.find(function(err, medicalReceipts) {
+
+        MedicalReceipt.find(function (err, medicalReceipts) {
             if (err) {
                 res.status(500).send(err);
             }
             res.status(200).json(medicalReceipts);
         });
-    } else if (req.roles.includes(roles.Role.PHYSICIAN) || 
-               req.roles.includes(roles.Role.PATIENT)) {
+    } else if (req.roles.includes(roles.Role.PHYSICIAN) ||
+        req.roles.includes(roles.Role.PATIENT)) {
 
         var query;
         if (req.roles.includes(roles.Role.PHYSICIAN)) {
-            query = {"physician":req.userID}
+            query = {
+                "physician": req.userID
+            }
         } else {
-            query = { "patient": req.userID }
+            query = {
+                "patient": req.userID
+            }
         }
-        MedicalReceipt.find(query,function (err, medicalReceipts) {
+        MedicalReceipt.find(query, function (err, medicalReceipts) {
             if (err) {
                 res.status(500).send(err);
             }
@@ -43,17 +47,17 @@ exports.get_medical_receipts_list = function(req, res) {
 };
 
 // GET /api/medicalReceipts/{id}
-exports.get_medical_receipt = function(req, res) {
+exports.get_medical_receipt = function (req, res) {
 
-    MedicalReceipt.findById(req.params.id, function(err, medicalReceipt) {
+    MedicalReceipt.findById(req.params.id, function (err, medicalReceipt) {
         if (err) {
             res.send(err);
         }
 
         if (req.roles.includes(roles.Role.ADMIN) ||
             req.roles.includes(roles.Role.PHARMACIST ||
-            (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
-            (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician) )) {
+                (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
+                (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician))) {
 
             res.status(200).json(medicalReceipt);
         } else {
@@ -63,10 +67,10 @@ exports.get_medical_receipt = function(req, res) {
 };
 
 // POST /api/medicalReceipts
-exports.post_medical_receipt = function(req, res) {
+exports.post_medical_receipt = function (req, res) {
 
-    if ( !( req.roles.includes(roles.Role.ADMIN) || 
-            req.roles.includes(roles.Role.PHYSICIAN) ) ) {
+    if (!(req.roles.includes(roles.Role.ADMIN) ||
+            req.roles.includes(roles.Role.PHYSICIAN))) {
         res.status(401).send('Unauthorized User.');
         return;
     }
@@ -82,12 +86,18 @@ exports.post_medical_receipt = function(req, res) {
 
     async.each(
         req.body.prescriptions,
-        
+
         (item, callback) => {
 
             var args = {
-                data: { "Email": config.medicines_backend.email, "Password": config.medicines_backend.secret },
-                headers: { "Authorization": "Bearer ".concat(req.token), "Content-Type": "application/json" }
+                data: {
+                    "Email": config.medicines_backend.email,
+                    "Password": config.medicines_backend.secret
+                },
+                headers: {
+                    "Authorization": "Bearer ".concat(req.token),
+                    "Content-Type": "application/json"
+                }
             };
 
             Promise.join(
@@ -119,11 +129,13 @@ exports.post_medical_receipt = function(req, res) {
         },
         (error) => {
             // save the medical receipt and check for errors
-            medicalReceipt.save( err => {
+            medicalReceipt.save(err => {
                 if (err) {
                     res.send(err);
                 }
-                res.json({ message: 'Medical Receipt Created!' });
+                res.json({
+                    message: 'Medical Receipt Created!'
+                });
             });
         });
 };
@@ -131,7 +143,7 @@ exports.post_medical_receipt = function(req, res) {
 // PUT /api/medicalReceipts/{id}
 exports.put_medical_receipt = function (req, res) {
 
-    if  (req.roles.includes(roles.Role.ADMIN) ||
+    if (req.roles.includes(roles.Role.ADMIN) ||
         req.roles.includes(roles.Role.PHYSICIAN)) {
         res.status(401).send('Unauthorized User.');
         return;
@@ -147,8 +159,14 @@ exports.put_medical_receipt = function (req, res) {
         (item, callback) => {
 
             var args = {
-                data: { "Email": config.medicines_backend.email, "Password": config.medicines_backend.secret },
-                headers: { "Authorization": "Bearer ".concat(req.token), "Content-Type": "application/json" }
+                data: {
+                    "Email": config.medicines_backend.email,
+                    "Password": config.medicines_backend.secret
+                },
+                headers: {
+                    "Authorization": "Bearer ".concat(req.token),
+                    "Content-Type": "application/json"
+                }
             };
 
             Promise.join(
@@ -191,7 +209,9 @@ exports.put_medical_receipt = function (req, res) {
                 });
             }
             // update the medical receipt and check for errors
-            MedicalReceipt.findOneAndUpdate({ _id: req.params.id }, {
+            MedicalReceipt.findOneAndUpdate({
+                _id: req.params.id
+            }, {
                 pyshician: req.userID,
                 patient: req.body.patient,
                 creationDate: cdate,
@@ -207,7 +227,7 @@ exports.put_medical_receipt = function (req, res) {
 }
 
 // DELETE /api/medicalReceipts/{id}
-exports.delete_medical_receipt = function(req, res) {
+exports.delete_medical_receipt = function (req, res) {
 
     if (!req.roles.includes(roles.Role.ADMIN)) {
         res.status(401).send('Unauthorized User.');
@@ -216,16 +236,22 @@ exports.delete_medical_receipt = function(req, res) {
 
     MedicalReceipt.remove({
         _id: req.params.id
-    }, function(err, medicalReceipt) {
+    }, function (err, medicalReceipt) {
         if (err) {
-            res.send(err);
+            res.status(500).json({
+                success: false,
+                message: err.message
+            });
         }
-        res.json({ message: 'Medical Receipt Deleted' });
+        res.status(200).json({
+            success: true,
+            message: 'Medical Receipt Deleted'
+        });
     });
 }
 
 // GET /api/MedicalReceipts/{id}/Prescriptions
-exports.get_prescriptions_by_id = function(req, res) {
+exports.get_prescriptions_by_id = function (req, res) {
 
     MedicalReceipt.findById(req.params.id, function (err, medicalReceipt) {
         if (err) {
@@ -234,8 +260,8 @@ exports.get_prescriptions_by_id = function(req, res) {
 
         if (req.roles.includes(roles.Role.ADMIN) ||
             req.roles.includes(roles.Role.PHARMACIST ||
-            (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
-            (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician))) {
+                (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
+                (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician))) {
 
             res.status(200).json(medicalReceipt.prescriptions);
         } else {
@@ -246,8 +272,8 @@ exports.get_prescriptions_by_id = function(req, res) {
 
 // POST /api/MedicalReceipts/{id1}/Prescriptions/{id2}/Fills
 exports.post_fill_prescription = (req, res) => {
-    if ( !( req.roles.includes(roles.Role.ADMIN) || 
-        req.roles.includes(roles.Role.PHARMACIST) ) ) {
+    if (!(req.roles.includes(roles.Role.ADMIN) ||
+            req.roles.includes(roles.Role.PHARMACIST))) {
 
         res.status(401).send('Unauthorized User.');
         return;
@@ -279,7 +305,9 @@ exports.post_fill_prescription = (req, res) => {
             if (err) {
                 res.send(err);
             }
-            res.json({ message: 'Medical Receipt Updated!' });
+            res.json({
+                message: 'Medical Receipt Updated!'
+            });
         });
     });
 }
@@ -288,8 +316,7 @@ exports.post_fill_prescription = (req, res) => {
 exports.post_prescription = function (req, res) {
 
     if (!(req.roles.includes(roles.Role.ADMIN) ||
-        req.roles.includes(roles.Role.PHYSICIAN))) 
-    {
+            req.roles.includes(roles.Role.PHYSICIAN))) {
         res.status(401).send('Unauthorized User.');
         return;
     }
@@ -299,8 +326,14 @@ exports.post_prescription = function (req, res) {
         }
 
         var args = {
-            data: { "Email": config.medicines_backend.email, "Password": config.medicines_backend.secret },
-            headers: { "Authorization": "Bearer ".concat(req.token), "Content-Type": "application/json" }
+            data: {
+                "Email": config.medicines_backend.email,
+                "Password": config.medicines_backend.secret
+            },
+            headers: {
+                "Authorization": "Bearer ".concat(req.token),
+                "Content-Type": "application/json"
+            }
         };
 
         Promise.join(
@@ -308,7 +341,7 @@ exports.post_prescription = function (req, res) {
             medicinesClient.getMedicine(args, req.body.medicine),
             medicinesClient.getPresentation(args, req.body.presentation),
             medicinesClient.getPosology(args, req.body.posology),
-            function(drug, medicine, presentation, posology) {
+            function (drug, medicine, presentation, posology) {
 
                 var prescription = {
                     "expirationDate": req.body.expirationDate,
@@ -332,12 +365,14 @@ exports.post_prescription = function (req, res) {
                     if (err) {
                         res.status(500).send(err);
                     }
-                    res.status(201).json({ message: 'Prescription Created & Added to Medical Receipt!' });
+                    res.status(201).json({
+                        message: 'Prescription Created & Added to Medical Receipt!'
+                    });
                 });
             })
     });
 
-} 
+}
 
 // GET /api/medicalReceipts/{id}/Prescriptions/{id}
 exports.get_prescription_by_id = function (req, res) {
@@ -349,8 +384,8 @@ exports.get_prescription_by_id = function (req, res) {
 
         if (req.roles.includes(roles.Role.ADMIN) ||
             req.roles.includes(roles.Role.PHARMACIST ||
-            (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
-            (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician))) {
+                (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
+                (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician))) {
 
             var prescription = medicalReceipt.prescriptions.id(req.params.prescId);
 
@@ -382,14 +417,20 @@ exports.put_prescription_by_id = function (req, res) {
             if (!prescription) {
                 res.status(404).send("The prescription doesn't exists.");
                 return;
-            } else if(prescription.fills.length > 0) {
+            } else if (prescription.fills.length > 0) {
                 res.status(401).send('The prescription has been filled & can\'t be changed');
                 return;
             }
 
             var args = {
-                data: { "Email": config.medicines_backend.email, "Password": config.medicines_backend.secret },
-                headers: { "Authorization": "Bearer ".concat(req.token), "Content-Type": "application/json" }
+                data: {
+                    "Email": config.medicines_backend.email,
+                    "Password": config.medicines_backend.secret
+                },
+                headers: {
+                    "Authorization": "Bearer ".concat(req.token),
+                    "Content-Type": "application/json"
+                }
             };
 
             Promise.join(
@@ -427,10 +468,12 @@ exports.put_prescription_by_id = function (req, res) {
                         if (err) res.status(500).send(err);
                     });
                     // update the medical receipt and check for errors
-                    medicalReceipt.save( err => {
+                    medicalReceipt.save(err => {
                         if (err) res.status(500).send(err);
 
-                        res.status(200).json({ message: 'Prescription was updated!' });
+                        res.status(200).json({
+                            message: 'Prescription was updated!'
+                        });
                     });
                 })
 
