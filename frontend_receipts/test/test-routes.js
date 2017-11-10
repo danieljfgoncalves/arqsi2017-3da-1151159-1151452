@@ -353,31 +353,49 @@ describe('MOCHA & CHAI TESTS', function () {
                         done();
                     });
             });
-
-        
-            // GET /api/MedicalReceipts/{id}/Prescriptions
-        // POST /api/MedicalReceipts/{id1}/Prescriptions/{id2}/Fills
-        // it('[POST] should post a fill a speciic prescription (pharmacist access)',
-        //     function (done) {
-        //         chai.request(server)
-        //             .get('/api/medicalReceipts/' + mrID + '/prescriptions/' + prescID + '/fills')
-        //             .set('x-access-token', pharmaToken)
-        //             .end(function (err, res) {
-        //                 res.should.have.status(200);
-        //                 res.should.be.json;
-        //                 res.body.should.be.a('object');
-        //                 res.body.should.have.property('expirationDate');
-        //                 res.body.should.have.property('fills');
-        //                 res.body.fills.should.be.a('array');
-        //                 assert.lengthOf(res.body.fills, 0);
-        //                 res.body.should.have.property('drug');
-        //                 res.body.should.have.property('presentation');
-        //                 res.body.should.have.property('prescribedPosology');
-        //                 res.body.drug.should.equal('Abacavir');
-        //                 res.body.presentation.form.should.equal('xarope');
-        //                 done();
-        //             });
-        //     });
+        it('[POST] should post a fill to a specific prescription (pharmacist access)',
+            function (done) {
+                chai.request(server)
+                    .post('/api/medicalReceipts/' + mrID + '/prescriptions/' + prescID + '/fills')
+                    .send({
+                        quantity: 10
+                    })
+                    .set('x-access-token', pharmaToken)
+                    .end(function (err, res) {
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.should.be.a('object');
+                        done();
+                    });
+            });
+        it('[POST] should not post a fill because of overlimit (pharmacist access)',
+            function (done) {
+                chai.request(server)
+                    .post('/api/medicalReceipts/' + mrID + '/prescriptions/' + prescID + '/fills')
+                    .send({
+                        quantity: 20
+                    })
+                    .set('x-access-token', pharmaToken)
+                    .end(function (err, res) {
+                        res.should.have.status(400);
+                        res.should.be.html;
+                        done();
+                    });
+            });
+        it('[POST] should not post a fill unauthorized (patient access)',
+            function (done) {
+                chai.request(server)
+                    .post('/api/medicalReceipts/' + mrID + '/prescriptions/' + prescID + '/fills')
+                    .send({
+                        quantity: 20
+                    })
+                    .set('x-access-token', patientToken)
+                    .end(function (err, res) {
+                        res.should.have.status(401);
+                        res.should.be.html;
+                        done();
+                    });
+            });
         it('[GET] should retrieve a prescription by id for respective medical receipt id (physcian access)',
             function (done) {
                 chai.request(server)

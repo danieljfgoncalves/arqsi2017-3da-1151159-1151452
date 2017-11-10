@@ -77,10 +77,7 @@ exports.post_medical_receipt = function (req, res) {
 
     var medicalReceipt = new MedicalReceipt();
 
-    var cdate = new Date();
-    if (req.body.creationDate) cdate = req.body.creationDate;
-
-    medicalReceipt.creationDate = cdate;
+    medicalReceipt.creationDate = req.body.creationDate;
     medicalReceipt.pyshician = req.userID;
     medicalReceipt.patient = req.body.patient;
 
@@ -111,6 +108,7 @@ exports.post_medical_receipt = function (req, res) {
                         "expirationDate": item.expirationDate,
                         "drug": drug.name,
                         "medicine": medicine.name,
+                        "quantity": item.quantity,
                         "prescribedPosology": {
                             "quantity": posology.quantity,
                             "technique": posology.technique,
@@ -149,9 +147,6 @@ exports.put_medical_receipt = function (req, res) {
         return;
     }
 
-    var cdate = new Date();
-    if (req.body.creationDate) cdate = req.body.creationDate;
-
     var newPrescriptions = [];
     async.each(
         req.body.prescriptions,
@@ -180,6 +175,7 @@ exports.put_medical_receipt = function (req, res) {
                         "expirationDate": item.expirationDate,
                         "drug": drug.name,
                         "medicine": medicine.name,
+                        "quantity": item.quantity,
                         "prescribedPosology": {
                             "quantity": posology.quantity,
                             "technique": posology.technique,
@@ -214,7 +210,7 @@ exports.put_medical_receipt = function (req, res) {
             }, {
                 pyshician: req.userID,
                 patient: req.body.patient,
-                creationDate: cdate,
+                creationDate: req.body.creationDate,
                 prescriptions: newPrescriptions
             }, err => {
 
@@ -290,7 +286,7 @@ exports.post_fill_prescription = (req, res) => {
             return;
         }
 
-        var availableFills = prescription._doc.presentation.quantity; // FIXME: Quantity should be a entered value with a prescription?
+        var availableFills = prescription._doc.quantity;
         prescription._doc.fills.forEach(element => {
             availableFills -= element.quantity;
         });
@@ -305,7 +301,7 @@ exports.post_fill_prescription = (req, res) => {
             if (err) {
                 res.send(err);
             }
-            res.json({
+            res.status(200).json({
                 message: 'Medical Receipt Updated!'
             });
         });
@@ -347,6 +343,7 @@ exports.post_prescription = function (req, res) {
                     "expirationDate": req.body.expirationDate,
                     "drug": drug.name,
                     "medicine": medicine.name,
+                    "quantity": item.quantity,
                     "prescribedPosology": {
                         "quantity": posology.quantity,
                         "technique": posology.technique,
@@ -387,7 +384,7 @@ exports.get_prescription_by_id = function (req, res) {
         var b2 = req.roles.includes(roles.Role.PHARMACIST);
         var b3 = req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient;
         var b4 = req.roles.includes(roles.Role.PHYSICIAN) && req.userID == id;
-        if(b1 || b2 || b3 || b4) {
+        if (b1 || b2 || b3 || b4) {
 
             var prescription = medicalReceipt.prescriptions.id(req.params.prescId);
 
@@ -444,11 +441,8 @@ exports.put_prescription_by_id = function (req, res) {
 
                     if (req.body.expirationDate) prescription.expirationDate = req.body.expirationDate;
                     if (drug) prescription.drug = drug.name;
-                    if (medicine) {
-                        prescription.medicine = medicine.name;
-                    } else {
-                        prescription.medicine = undefined;
-                    }
+                    if (medicine) prescription.medicine = medicine.name;
+                    if (req.body.quantity) prescription.quantity = req.body.quantity;
                     if (posology) {
                         prescription.prescribedPosology = {
                             "quantity": posology.quantity,

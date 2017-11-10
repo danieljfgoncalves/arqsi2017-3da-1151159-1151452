@@ -3,6 +3,9 @@
 var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
+var defaultExpirationDate = new Date();
+defaultExpirationDate.setDate(defaultExpirationDate.getDate() + 30);
+
 var PresentationSchema = new Schema({
     form: String,
     concentration: Number,
@@ -19,11 +22,12 @@ var PrescribedPosologySchema = new Schema({
     period: String
 });
 var PrescriptionSchema = new Schema({
-    expirationDate: Date,
+    expirationDate: { type: Date, default: defaultExpirationDate },
     drug: String,
     medicine: String,
     prescribedPosology: PrescribedPosologySchema,
     presentation: PresentationSchema,
+    quantity: { type: Number, required: 'Quantity is required', min: 1 },
     fills: [ FillSchema ]
 });
 var MedicalReceiptSchema = new Schema({

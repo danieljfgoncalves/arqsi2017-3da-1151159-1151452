@@ -18,6 +18,7 @@ exports.medicalReceipts = [{
             },
             'drug': 'Abacavir',
             'medicine': 'Brufen',
+            'quantity': 10,
             'fills': []
         }],
         'creationDate': '2017-11-06T16:24:47.444Z'
@@ -40,6 +41,7 @@ exports.medicalReceipts = [{
             },
             'drug': 'Paracetamol',
             'medicine': 'Ben-u-ron',
+            'quantity': 5,
             'fills': []
         }],
         'creationDate': '2017-11-06T18:24:47.444Z'
@@ -62,6 +64,7 @@ exports.medicalReceipts = [{
             },
             'drug': 'Paracetamol',
             'medicine': 'Ben-u-ron',
+            'quantity': 3,
             'fills': []
         }],
         'creationDate': '2017-11-09T18:24:47.444Z'
