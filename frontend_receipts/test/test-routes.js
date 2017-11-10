@@ -192,15 +192,17 @@ describe('MOCHA & CHAI TESTS', function () {
     describe('TESTING: Medical Receipts', function () {
 
         var mrID;
+        var prescID;
 
-        before(async function () {
+        beforeEach(async function () {
             await MedicalReceipt.collection.remove();
             await MedicalReceipt.insertMany(mockObjects.medicalReceipts, (err, docs) => {
                 mrID = docs[0]._id;
+                prescID = docs[0].prescriptions[0]._id;
             });
         });
 
-        after(function (done) {
+        afterEach(function (done) {
             MedicalReceipt.collection.remove(done);
         });
 
@@ -352,9 +354,71 @@ describe('MOCHA & CHAI TESTS', function () {
                     });
             });
 
-        // GET /api/MedicalReceipts/{id}/Prescriptions
+        
+            // GET /api/MedicalReceipts/{id}/Prescriptions
         // POST /api/MedicalReceipts/{id1}/Prescriptions/{id2}/Fills
-        // GET /api/medicalReceipts/{id}/Prescriptions/{id}
+        // it('[POST] should post a fill a speciic prescription (pharmacist access)',
+        //     function (done) {
+        //         chai.request(server)
+        //             .get('/api/medicalReceipts/' + mrID + '/prescriptions/' + prescID + '/fills')
+        //             .set('x-access-token', pharmaToken)
+        //             .end(function (err, res) {
+        //                 res.should.have.status(200);
+        //                 res.should.be.json;
+        //                 res.body.should.be.a('object');
+        //                 res.body.should.have.property('expirationDate');
+        //                 res.body.should.have.property('fills');
+        //                 res.body.fills.should.be.a('array');
+        //                 assert.lengthOf(res.body.fills, 0);
+        //                 res.body.should.have.property('drug');
+        //                 res.body.should.have.property('presentation');
+        //                 res.body.should.have.property('prescribedPosology');
+        //                 res.body.drug.should.equal('Abacavir');
+        //                 res.body.presentation.form.should.equal('xarope');
+        //                 done();
+        //             });
+        //     });
+        it('[GET] should retrieve a prescription by id for respective medical receipt id (physcian access)',
+            function (done) {
+                chai.request(server)
+                    .get('/api/medicalReceipts/' + mrID + '/prescriptions/' + prescID)
+                    .set('x-access-token', physicianToken)
+                    .end(function (err, res) {
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('expirationDate');
+                        res.body.should.have.property('fills');
+                        res.body.fills.should.be.a('array');
+                        assert.lengthOf(res.body.fills, 0);
+                        res.body.should.have.property('drug');
+                        res.body.should.have.property('presentation');
+                        res.body.should.have.property('prescribedPosology');
+                        res.body.drug.should.equal('Abacavir');
+                        res.body.presentation.form.should.equal('xarope');
+                        done();
+                    });
+            });
+        it('[GET] should not retrieve a prescription from another patient (patient access)',
+            function (done) {
+                chai.request(server)
+                    .get('/api/medicalReceipts/' + mrID + '/prescriptions/' + prescID)
+                    .set('x-access-token', patient2Token)
+                    .end(function (err, res) {
+                        res.should.have.status(401);
+                        done();
+                    });
+            });
+        it('[GET] should not retrieve a prescription with invalid id (admin access)',
+            function (done) {
+                chai.request(server)
+                    .get('/api/medicalReceipts/' + mrID + '/prescriptions/' + '10101')
+                    .set('x-access-token', patient2Token)
+                    .end(function (err, res) {
+                        res.should.have.status(401);
+                        done();
+                    });
+            });
     });
 
     describe('TESTING: Patients', function () {

@@ -290,7 +290,7 @@ exports.post_fill_prescription = (req, res) => {
             return;
         }
 
-        var availableFills = prescription._doc.presentation.quantity;
+        var availableFills = prescription._doc.presentation.quantity; // FIXME: Quantity should be a entered value with a prescription?
         prescription._doc.fills.forEach(element => {
             availableFills -= element.quantity;
         });
@@ -381,11 +381,13 @@ exports.get_prescription_by_id = function (req, res) {
         if (err) {
             res.status(500).send(err);
         }
+        var id = medicalReceipt.physician.toString()
 
-        if (req.roles.includes(roles.Role.ADMIN) ||
-            req.roles.includes(roles.Role.PHARMACIST ||
-                (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
-                (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician))) {
+        var b1 = req.roles.includes(roles.Role.ADMIN);
+        var b2 = req.roles.includes(roles.Role.PHARMACIST);
+        var b3 = req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient;
+        var b4 = req.roles.includes(roles.Role.PHYSICIAN) && req.userID == id;
+        if(b1 || b2 || b3 || b4) {
 
             var prescription = medicalReceipt.prescriptions.id(req.params.prescId);
 
