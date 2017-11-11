@@ -23,5 +23,9 @@ module.exports = {
             'user': 'arqsi2017-1151452-1151159', // smtp2go user
             'pass': 'dHhudGMwNm5qbzkw' // smtp2go password
         }
+    },
+    'sms': {
+        'username': 'danielgoncalves',
+        'api_key': 'NKNZETIoIuKyFkqU0rSnkXyaBqanMO'
     }
 };

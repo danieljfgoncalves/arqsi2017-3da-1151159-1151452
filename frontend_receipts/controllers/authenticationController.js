@@ -19,12 +19,16 @@ exports.postRegistration = function (req, res) {
             if (aRole != null) myRoles.add(aRole);
         });
     }
-    if(myRoles.size == 0) myRoles.add(roles.Role.PATIENT);
+    if (myRoles.size == 0) myRoles.add(roles.Role.PATIENT);
+
+    var mobile = undefined;
+    if (req.body.mobile) mobile = req.body.mobile;
 
     User.create({
         name: req.body.name,
         email: req.body.email,
         password: hashedPassword,
+        mobile: mobile,
         roles: Array.from(myRoles)
     },
         function (err, user) {

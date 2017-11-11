@@ -69,7 +69,8 @@ describe('MOCHA & CHAI TESTS', function () {
                     .send({
                         name: correctName,
                         password: 'passwd',
-                        email: "test@email.pt"
+                        email: "test@email.pt",
+                        mobile: "+351936523509"
                     })
                     .end(function (err, res) {
                         res.should.have.status(200);
@@ -84,7 +85,8 @@ describe('MOCHA & CHAI TESTS', function () {
                     .post('/api/register')
                     .send({
                         password: 'passwd',
-                        email: "test@email.pt"
+                        email: "test@email.pt",
+                        mobile: "+351936523509"
                     })
                     .end(function (err, res) {
                         res.should.have.status(500);
@@ -97,7 +99,8 @@ describe('MOCHA & CHAI TESTS', function () {
                     .post('/api/register')
                     .send({
                         name: correctName,
-                        email: "test@email.pt"
+                        email: "test@email.pt",
+                        mobile: "+351936523509"
                     })
                     .end(function (err, res) {
                         res.should.have.status(500);
@@ -110,7 +113,8 @@ describe('MOCHA & CHAI TESTS', function () {
                     .post('/api/register')
                     .send({
                         name: correctName,
-                        password: "passwd"
+                        password: "passwd",
+                        mobile: "+351936523509"
                     })
                     .end(function (err, res) {
                         res.should.have.status(500);
@@ -124,7 +128,39 @@ describe('MOCHA & CHAI TESTS', function () {
                     .send({
                         name: correctName,
                         password: 'passwd',
-                        email: "testemail.pt"
+                        email: "testemail.pt",
+                        mobile: "+351936523509"
+                    })
+                    .end(function (err, res) {
+                        res.should.have.status(500);
+                        done();
+                    });
+            });
+        it('[POST] should register user with no mobile number',
+            function (done) {
+                chai.request(server)
+                    .post('/api/register')
+                    .send({
+                        name: correctName,
+                        password: "passwd",
+                        email: "teste@mail.pt"
+                    })
+                    .end(function (err, res) {
+                        res.should.have.status(200);
+                        res.should.be.html;
+                        res.text.should.equal("User [" + correctName + "] registered with success.");
+                        done();
+                    });
+            });
+        it('[POST] shouldn\'t register user with invalid mobile number',
+            function (done) {
+                chai.request(server)
+                    .post('/api/register')
+                    .send({
+                        name: correctName,
+                        password: 'passwd',
+                        email: "teste@mail.pt",
+                        mobile: "test"
                     })
                     .end(function (err, res) {
                         res.should.have.status(500);

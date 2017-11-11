@@ -11,6 +11,9 @@ var mongoose = require('mongoose');
 var Promise = require('bluebird');
 mongoose.Promise = Promise;
 const email = require('../helpers/email');
+var TMClient = require('textmagic-rest-client');
+sms = new TMClient(config.sms.username, config.sms.api_key);
+const moment = require('moment');
 
 // TODO: Review all roles as for requistes table.
 
@@ -142,9 +145,22 @@ exports.post_medical_receipt = function (req, res) {
                     User.findOne({
                         _id: req.userID
                     }).exec(),
-                    (patient, physician) => {
+                    async(patient, physician) => {
+                        // send sms
+                        var text = 'Hello ' + patient.name + ',\n' +
+                            'Your medical receipt has been issue and is available since ' +
+                            moment(medicalReceipt.creationDate).format("dddd, MMMM Do YYYY") +
+                            '.\n\nRegards,\n Dr. ' + physician.name;
+
+                        await sms.Messages.send({
+                            text: text,
+                            phones: patient.mobile
+                        }, function (err, res) {
+                            console.log('SMS sent: error {', err, '} res:', res);
+                        });
+
                         // send mail with defined transport object
-                        email.transporter.sendMail(email.mailCreatedRM(medicalReceipt, patient, physician), (error, info) => {
+                        await email.transporter.sendMail(email.mailCreatedRM(medicalReceipt, patient, physician), (error, info) => {
                             if (error) {
                                 res.status(201).json({
                                     message: 'Medical Receipt Created, but email notification failed!'

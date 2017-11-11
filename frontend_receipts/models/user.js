@@ -27,5 +27,10 @@ module.exports = mongoose.model('User', new Schema({
         required: 'Email address is required',
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
+    mobile: {
+        type: String,
+        trim: true,
+        match: [/^(\+\d{1,3})?\d{10}$/, 'Please fill a valid mobile number']
+    },
     roles: [String]
 }));
