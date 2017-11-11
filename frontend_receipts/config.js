@@ -12,8 +12,8 @@ module.exports = {
         "secret": "Arqsi-2017"
     },
     'mongoURI': { // FIXME: deploy on Azure
-        'development': 'mongodb://localhost:27017/arqsi-dev',
-        'test': 'mongodb://localhost:27017/arqsi-test'
+        'development': 'mongodb://arqsi2017:arqsi2017@ds113925.mlab.com:13925/arqsi2017-dev',
+        'test': 'mongodb://arqsi2017:arqsi2017@ds042677.mlab.com:42677/arqsi2017-test'
     },
     'email': {
         'host': 'mail.smtp2go.com',
