@@ -45,17 +45,28 @@ var PrescriptionSchema = new Schema({
 var MedicalReceiptSchema = new Schema({
     physician: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: 'Physician ID is required.'
     },
     patient: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: 'Patient ID is required.'
     },
     creationDate: {
         type: Date,
         default: Date.now
     },
-    prescriptions: [PrescriptionSchema]
+    prescriptions: [{
+        type: PrescriptionSchema,
+        required: 'Prescriptions are required'
+    }]
 });
+
+MedicalReceiptSchema.path('prescriptions').validate(prescriptions => {
+    if (!prescriptions) { return false }
+    else if (prescriptions.length === 0) { return false }
+    return true;
+}, 'A medical receipt must have at least one prescription.');
 
 module.exports = mongoose.model('MedicalReceipt', MedicalReceiptSchema);
