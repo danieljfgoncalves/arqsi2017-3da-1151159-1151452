@@ -20,7 +20,9 @@ var app = express();
 var mongoOptions = {
   useMongoClient: true,
 };
-mongoose.connect(config.mongoURI[app.get('env')], mongoOptions, function (error) {
+
+//mongoose.connect(config.mongoURI[app.get('env')], mongoOptions, function (error) {
+mongoose.connect("mongodb://arqsi2017:arqsi2017@ds113925.mlab.com:13925/arqsi2017-dev", mongoOptions, function (error) {
   if (error) {
     console.log('Error connecting to the database. ' + error);
   } else {
