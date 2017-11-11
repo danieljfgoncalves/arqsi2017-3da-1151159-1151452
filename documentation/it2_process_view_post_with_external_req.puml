@@ -1,0 +1,68 @@
+@startuml
+
+title: <size:20> POST Request with external request [Process View]</size>
+
+' Lifelines
+participant Client as cl <<HTTP>>
+participant Server as node <<NodeJS>>
+participant App as app <<ExpressJS>>
+participant Router as r <<ExpressJS>>
+collections Middlewares as mds <<ExpressJS>>
+participant Controller as c <<Controller>>
+participant RestClient as rc <<REST>>
+participant Model as m <<Mongoose>>
+boundary MedicinesBackend as med <<API>>
+database Database as db <<MongoDB>>
+
+
+' Sequence
+cl -> node : [POST] request
+activate node #6cc24a
+
+node -> app : use()
+    activate app
+    app -> r : post()
+        activate r
+            loop use middlewares
+            r -> mds : use()
+            activate mds
+                mds -> mds : [perform task]
+                mds -> r : next() [callback]
+                activate r
+                r --> mds
+                deactivate r
+            end
+            deactivate mds
+            r -> c : saveObject()
+            activate c
+
+                c -> c : internal\nrequest [GET]
+                activate c #DarkSalmon
+                c -> rc : << createRequest >>
+                activate rc
+                rc --> c: request created
+                deactivate rc
+                deactivate c
+                c -> med : getObjects() : objs [GET]
+                activate med
+                med --> c : return json objects
+                deactivate med
+                c -> m : create(objs)
+                activate m
+                    note right of m
+                     **<color purple>CRUD</color>**
+                    end note
+                    m -> db : create & save to database
+                    db --> m : return success info
+                    m --> c
+                deactivate m
+                c --> r
+            deactivate c
+            r --> app
+        deactivate r
+        app --> node
+    deactivate app
+    node --> cl : display success message <font color=green><b>[status: 201]
+deactivate node
+
+@enduml

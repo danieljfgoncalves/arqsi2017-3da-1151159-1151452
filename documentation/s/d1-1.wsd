@@ -1,0 +1,50 @@
+@startuml
+
+title: <size:20> POST Request [Process Sequence]</size>
+
+participant Client as cl <<HTTP>>
+participant Serializer as s <<ASP.NET>>
+participant RoutingMechanism as r <<ASP.NET>>
+participant APIController as c <<Controller>>
+participant APIModel as m <<Model>>
+
+database database as db
+
+cl -> r : [POST] request
+
+activate r
+r -> c : post(param(s))
+deactivate r
+activate c
+
+note right of s
+ response as 
+ JSON, XML, etc..
+end note
+
+c -> s : deserialize
+
+s --> c : return object(s)
+
+note right of c 
+ **<color purple>CRUD</color>**
+end note
+
+c -> m : create()
+
+note right of m
+ **<color blue>Entity</color>**
+ **<color blue>Framework</color>**
+end note
+
+activate m
+m -> db : save()
+deactivate m
+activate db
+db--> c : DB Response
+deactivate db
+
+c --> cl : createAtAction() [201 Created]
+deactivate c
+
+@enduml

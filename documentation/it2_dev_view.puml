@@ -1,0 +1,15 @@
+@startuml
+
+rectangle "1st Iteration" #009FBD {
+    package "Backend Medicines" as BM {
+    }
+}
+
+rectangle "2nd Iteration" #43CC72 {
+    package "Frontend Medical Receipts" as BR {
+    }
+}
+
+BM <... BR
+
+@enduml

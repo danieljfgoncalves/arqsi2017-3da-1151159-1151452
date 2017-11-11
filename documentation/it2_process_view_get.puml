@@ -1,0 +1,54 @@
+@startuml
+
+title: <size:20> GET Request [Process View]</size>
+
+' Lifelines
+participant Client as cl <<HTTP>>
+participant Server as node <<NodeJS>>
+participant App as app <<ExpressJS>>
+participant Router as r <<ExpressJS>>
+collections Middlewares as mds <<ExpressJS>>
+participant Controller as c <<Controller>>
+participant Model as m <<Mongoose>>
+database Database as db <<MongoDB>>
+
+
+' Sequence
+cl -> node : [GET] request
+activate node #6cc24a
+
+node -> app : use()
+    activate app
+    app -> r : get()
+        activate r
+            loop use middlewares
+            r -> mds : use()
+            activate mds
+                mds -> mds : [perform task]
+                mds -> r : next() [callback]
+                activate r
+                r --> mds
+                deactivate r
+            end
+            deactivate mds
+            r -> c : getObject()
+            activate c
+                c -> m : find()
+                activate m
+                    note right of m
+                     **<color purple>CRUD</color>**
+                    end note
+                    m -> db : read from database
+                    db --> m : return json object/array
+                    m --> c : return mongoose\nschema object (JSON)
+                deactivate m
+                c --> r : send json object/array
+            deactivate c
+            r --> app
+        deactivate r
+        app --> node
+    deactivate app
+    node --> cl : display json object/array <font color=blue><b>[status: 200]
+deactivate node
+
+@enduml

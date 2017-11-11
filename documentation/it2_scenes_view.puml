@@ -1,0 +1,44 @@
+@startuml
+
+actor :Physician: as D
+actor :Pharmacist: as F
+actor :System: as S
+actor :Patient: as P
+
+usecase (Create receipts) as crr
+usecase (Edit receipts) as er
+usecase (Consult receipts) as cr
+usecase (Consult prescriptions) as cp
+usecase (Fill prescriptions) as fp
+usecase (Alert patients\nwith new receipts) as ap
+
+S -> ap
+D -> crr
+D -> er
+D -> cr
+D -> cp
+F -> cr
+F -> cp
+F -> fp
+P --> cr
+P -> cp
+
+S --[hidden]> D
+D -[hidden]> F
+F --[hidden]> P
+
+
+
+@enduml
+
+DM <- F
+D -> CM
+D --> PM
+APEP <-S
+OD <- P
+CP <- P
+
+' Just for display purposes
+I --[hidden]> D
+F --[hidden]> S
+S --[hidden]> P

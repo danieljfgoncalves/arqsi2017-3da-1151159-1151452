@@ -1,0 +1,26 @@
+@startuml
+
+() "MedicinesService" as med
+
+rectangle "Frontend Receipts" #43CC72 {
+    component [Controller] as c
+    () "Controller Interface" as ci
+    component [Router] as r
+    database "Database" as db
+    () "DB Interface" as dbi
+    component [Model] as m
+    () "Model Interface" as mi
+    () "ReceiptsService" as rs
+}
+
+c --( mi
+ci - c
+r -( ci
+dbi - db
+m -( dbi
+mi - m
+rs - r
+c -( med
+
+
+@enduml

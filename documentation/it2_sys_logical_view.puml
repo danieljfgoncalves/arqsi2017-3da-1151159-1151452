@@ -1,0 +1,27 @@
+@startuml
+
+component [Client Infarmed] as CI
+
+rectangle "1st Iteration" #009FBD {
+    component [Backend Medicines] as BOM
+    database "Db Medicines" as DBM
+    MedicinesDbService - DBM
+    BOM -- BackendMedicinesService
+}
+
+rectangle "2nd Iteration" #43CC72 {
+    component [Frontend Receipts] as BOR
+    database "Db Receipts" as DBR
+    ReceiptDbService - DBR
+    BOR -- FrontendReceiptsService
+}
+
+component [Client Receipts] as CP
+
+BOM -( MedicinesDbService
+BackendMedicinesService )-- BOR
+BackendMedicinesService )- CI
+BOR -( ReceiptDbService
+FrontendReceiptsService )- CP
+
+@enduml
