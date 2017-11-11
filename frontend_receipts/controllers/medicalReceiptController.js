@@ -146,18 +146,20 @@ exports.post_medical_receipt = function (req, res) {
                         _id: req.userID
                     }).exec(),
                     async(patient, physician) => {
-                        // send sms
-                        var text = 'Hello ' + patient.name + ',\n' +
-                            'Your medical receipt has been issue and is available since ' +
-                            moment(medicalReceipt.creationDate).format("dddd, MMMM Do YYYY") +
-                            '.\n\nRegards,\n Dr. ' + physician.name;
+                        // send sms // put directly in mlabs "mobile": "+351936523509" because of credit
+                        if (patient.mobile) {
+                            var text = 'Hello ' + patient.name + ',\n' +
+                                'Your medical receipt has been issue and is available since ' +
+                                moment(medicalReceipt.creationDate).format("dddd, MMMM Do YYYY") +
+                                '.\n\nRegards,\n Dr. ' + physician.name;
 
-                        await sms.Messages.send({
-                            text: text,
-                            phones: patient.mobile
-                        }, function (err, res) {
-                            console.log('SMS sent: error {', err, '} res:', res);
-                        });
+                            await sms.Messages.send({
+                                text: text,
+                                phones: patient.mobile
+                            }, function (err, res) {
+                                console.log('SMS sent: error {', err, '} res:', res);
+                            });
+                        }
 
                         // send mail with defined transport object
                         await email.transporter.sendMail(email.mailCreatedRM(medicalReceipt, patient, physician), (error, info) => {
@@ -288,7 +290,7 @@ exports.put_medical_receipt = async function (req, res) {
 }
 
 // DELETE /api/medicalReceipts/{id}
-exports.delete_medical_receipt = (req, res) => {
+exports.delete_medical_receipt = function (req, res) {
 
     if (!req.roles.includes(roles.Role.ADMIN)) {
         res.status(401).send('Unauthorized User.');
@@ -297,23 +299,13 @@ exports.delete_medical_receipt = (req, res) => {
 
     MedicalReceipt.remove({
         _id: req.params.id
-    }, (err, medicalReceipt) => {
+    }, function (err, medicalReceipt) {
         if (err) {
             res.status(500).json({
                 success: false,
                 message: err.message
             });
-            return;
         }
-
-        if (medicalReceipt.result.n < 1) {
-            res.status(404).json({
-                success: false,
-                message: 'Medical Receipt Not Found'
-            });
-            return;
-        }
-
         res.status(200).json({
             success: true,
             message: 'Medical Receipt Deleted'
