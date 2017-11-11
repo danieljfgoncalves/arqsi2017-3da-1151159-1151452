@@ -1,18 +1,18 @@
-var express       = require('express');
-var path          = require('path');
-var favicon       = require('serve-favicon');
-var logger        = require('morgan');
-var cookieParser  = require('cookie-parser');
-var bodyParser    = require('body-parser');
-var mongoose      = require('mongoose');
-var config        = require('./config'); // get our config file
-var jwt           = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var express = require('express');
+var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var config = require('./config'); // get our config file
+var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 // import routes
-var index           = require('./routes/index');
+var index = require('./routes/index');
 var medicalReceipts = require('./routes/medicalReceipts');
-var patients        = require('./routes/patients');
-var authentication  = require('./routes/authentication'); 
+var patients = require('./routes/patients');
+var authentication = require('./routes/authentication');
 
 var app = express();
 
@@ -21,15 +21,14 @@ var mongoOptions = {
   useMongoClient: true,
 };
 
-mongoose.connect(config.mongoURI['development'], mongoOptions, function (error) {
+mongoose.connect(config.mongoURI[app.get('env')], mongoOptions, error => {
   if (error) {
     console.log('Error connecting to the database. ' + error);
   } else {
-    console.log('Connected to Database: ' + config.mongoURI['development']);
+    if (app.get('env') != 'test') console.log('Connected to Database: ' + config.mongoURI[app.get('env')]);
   }
 });
 
-// FIXME: view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -37,7 +36,9 @@ app.set('view engine', 'jade');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 if (app.get('env') != 'test') app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -47,14 +48,14 @@ app.use('/api/', patients);
 app.use('/api/', authentication);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

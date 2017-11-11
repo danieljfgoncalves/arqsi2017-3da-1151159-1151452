@@ -15,8 +15,6 @@ var TMClient = require('textmagic-rest-client');
 sms = new TMClient(config.sms.username, config.sms.api_key);
 const moment = require('moment');
 
-// TODO: Review all roles as for requistes table.
-
 // GET /api/medicalReceipts
 exports.get_medical_receipts_list = function (req, res) {
 
