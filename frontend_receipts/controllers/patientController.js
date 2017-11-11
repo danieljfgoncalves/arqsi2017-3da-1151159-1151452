@@ -36,7 +36,21 @@ exports.get_prescriptions_to_fill_until_date = (req, res) => {
 
                 var dateFilter = new Date(req.query.date);
                 if ((!dateFilter) || (p._doc.expirationDate < dateFilter)) {
-                    prescriptions.push(p);
+
+                    // extra - filter by given fields
+                    var fields = req.query.fields;
+                    if (fields) { 
+                        var prescriptionDTO = {};
+                        var fieldsArray = fields.split(",");
+                        for(var i=0; i<fieldsArray.length; i++) {
+                            prescriptionDTO[fieldsArray[i]] = p[fieldsArray[i]];
+                        }
+                        prescriptions.push(prescriptionDTO);
+                    }
+                    else {
+                        prescriptions.push(p);
+                    }
+
                 }
             });
         });
