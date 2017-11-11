@@ -2,12 +2,15 @@
 
 var roles = require('../models/roles');
 var MedicalReceipt = require('../models/medicalReceipt');
+var User = require('../models/user');
 var config = require('../config');
 var nodeRestClient = require('node-rest-client');
 var async = require('async');
 var medicinesClient = require('../helpers/medicinesRequests');
+var mongoose = require('mongoose');
 var Promise = require('bluebird');
-
+mongoose.Promise = Promise;
+const email = require('../helpers/email');
 
 // TODO: Review all roles as for requistes table.
 
@@ -54,11 +57,11 @@ exports.get_medical_receipt = function (req, res) {
             res.send(err);
         }
 
-        if (req.roles.includes(roles.Role.ADMIN) ||
-            req.roles.includes(roles.Role.PHARMACIST ||
-                (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
-                (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician))) {
-
+        var b1 = req.roles.includes(roles.Role.ADMIN);
+        var b2 = req.roles.includes(roles.Role.PHARMACIST);
+        var b3 = req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient;
+        var b4 = req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician;
+        if (b1 || b2 || b3 || b4) {
             res.status(200).json(medicalReceipt);
         } else {
             res.status(401).send('Unauthorized User.');
@@ -78,7 +81,7 @@ exports.post_medical_receipt = function (req, res) {
     var medicalReceipt = new MedicalReceipt();
 
     medicalReceipt.creationDate = req.body.creationDate;
-    medicalReceipt.pyshician = req.userID;
+    medicalReceipt.physician = req.userID;
     medicalReceipt.patient = req.body.patient;
 
     async.each(
@@ -123,26 +126,61 @@ exports.post_medical_receipt = function (req, res) {
                     };
                     medicalReceipt.prescriptions.push(prescription);
                     callback();
-                })
+                });
         },
         (error) => {
             // save the medical receipt and check for errors
             medicalReceipt.save(err => {
                 if (err) {
-                    res.send(err);
+                    res.status(500).send(err);
                 }
-                res.json({
-                    message: 'Medical Receipt Created!'
-                });
+
+                Promise.join(
+                    User.findOne({
+                        _id: req.body.patient
+                    }).exec(),
+                    User.findOne({
+                        _id: req.userID
+                    }).exec(),
+                    (patient, physician) => {
+                        // send mail with defined transport object
+                        email.transporter.sendMail(email.mailCreatedRM(medicalReceipt, patient, physician), (error, info) => {
+                            if (error) {
+                                res.status(201).json({
+                                    message: 'Medical Receipt Created, but email notification failed!'
+                                });
+                                return console.log(error);
+                            }
+                            console.log('Email sent: %s', info.messageId);
+                            res.status(201).json({
+                                message: 'Medical Receipt Created!'
+                            });
+                        });
+                    });
             });
         });
 };
 
 // PUT /api/medicalReceipts/{id}
-exports.put_medical_receipt = function (req, res) {
+exports.put_medical_receipt = async function (req, res) {
 
-    if (req.roles.includes(roles.Role.ADMIN) ||
-        req.roles.includes(roles.Role.PHYSICIAN)) {
+    var physicianID;
+    await MedicalReceipt.findById(req.params.id, function (err, medicalReceipt) {
+        physicianID = medicalReceipt.physician;
+
+        var hasFills = false;
+        medicalReceipt.prescriptions.forEach(element => {
+            hasFills |= element.fills.length > 0;
+        });
+
+        if (hasFills) {
+            res.status(401).send('Unauthorized User.');
+            return;
+        }
+    });
+
+    if (!(req.roles.includes(roles.Role.ADMIN) ||
+            (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == physicianID))) {
         res.status(401).send('Unauthorized User.');
         return;
     }
@@ -192,32 +230,43 @@ exports.put_medical_receipt = function (req, res) {
                     callback();
                 })
         },
-        (error) => {
-            if (req.roles.includes(roles.Role.PHYSICIAN)) {
-                MedicalReceipt.findById(req.params.id, function (err, medicalReceipt) {
-                    if (err) {
-                        res.status(500).send(err);
-                    }
-                    if (req.userID != medicalReceipt.physician) {
-                        res.status(401).send('Unauthorized User.');
-                        return;
-                    }
-                });
-            }
+        error => {
             // update the medical receipt and check for errors
             MedicalReceipt.findOneAndUpdate({
                 _id: req.params.id
             }, {
-                pyshician: req.userID,
+                physician: req.userID,
                 patient: req.body.patient,
                 creationDate: req.body.creationDate,
                 prescriptions: newPrescriptions
-            }, err => {
+            }, (err, medicalReceipt) => {
 
                 if (err) {
                     res.status(500).send(err);
                 }
-                res.status(200).send('Medical Receipt Updated!');
+
+                Promise.join(
+                    User.findOne({
+                        _id: req.body.patient
+                    }).exec(),
+                    User.findOne({
+                        _id: req.userID
+                    }).exec(),
+                    (patient, physician) => {
+                        // send mail with defined transport object
+                        email.transporter.sendMail(email.mailUpdatedRM(medicalReceipt, patient, physician), (error, info) => {
+                            if (error) {
+                                res.status(200).json({
+                                    message: 'Medical Receipt Updated, but email notification failed!'
+                                });
+                                return console.log(error);
+                            }
+                            console.log('Email sent: %s', info.messageId);
+                            res.status(200).json({
+                                message: 'Medical Receipt Updated!'
+                            });
+                        });
+                    });
             });
         });
 }
@@ -254,10 +303,11 @@ exports.get_prescriptions_by_id = function (req, res) {
             res.send(err);
         }
 
-        if (req.roles.includes(roles.Role.ADMIN) ||
-            req.roles.includes(roles.Role.PHARMACIST ||
-                (req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient) ||
-                (req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician))) {
+        var b1 = req.roles.includes(roles.Role.ADMIN);
+        var b2 = req.roles.includes(roles.Role.PHARMACIST);
+        var b3 = req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient;
+        var b4 = req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician;
+        if (b1 || b2 || b3 || b4) {
 
             res.status(200).json(medicalReceipt.prescriptions);
         } else {
@@ -378,12 +428,10 @@ exports.get_prescription_by_id = function (req, res) {
         if (err) {
             res.status(500).send(err);
         }
-        var id = medicalReceipt.physician.toString()
-
         var b1 = req.roles.includes(roles.Role.ADMIN);
         var b2 = req.roles.includes(roles.Role.PHARMACIST);
         var b3 = req.roles.includes(roles.Role.PATIENT) && req.userID == medicalReceipt.patient;
-        var b4 = req.roles.includes(roles.Role.PHYSICIAN) && req.userID == id;
+        var b4 = req.roles.includes(roles.Role.PHYSICIAN) && req.userID == medicalReceipt.physician;
         if (b1 || b2 || b3 || b4) {
 
             var prescription = medicalReceipt.prescriptions.id(req.params.prescId);
