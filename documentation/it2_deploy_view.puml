@@ -1,7 +1,7 @@
 @startuml "deploy_view_it2"
 
 ' Components
-package "1st Iteration" #009FBD {
+rectangle "1st Iteration" #009FBD {
   
   cloud "az: Azure Cloud Server\n" as az1 #white {
     database "SQL Database" #DCDCDC {
@@ -13,7 +13,7 @@ package "1st Iteration" #009FBD {
 }
 }
 
-package "2nd Iteration" #43CC72 {
+rectangle "2nd Iteration" #43CC72 {
 
   cloud "az: Azure Cloud Server\n" as az2 #white {
     folder "node.js Service" {

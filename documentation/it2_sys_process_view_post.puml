@@ -1,0 +1,22 @@
+@startuml
+
+title: <size:20> POST Request [System Process View]</size>
+
+' Lifelines
+participant Client as cl <<HTTP>>
+participant Server as node <<NodeJS>>
+database Database as db <<MongoDB>>
+
+
+' Sequence
+note over of node #00aeff: Express JS App
+cl -> node : [POST] request
+activate node #6cc24a
+    note over of db #ecb731: CRUD
+    node -> db : CREATE
+activate db #146eb4
+    db --> node : returns json objects
+deactivate db
+    node --> cl : display json\n<font color=green><b>[status: 201]
+deactivate node
+@enduml

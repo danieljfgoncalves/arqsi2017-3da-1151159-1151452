@@ -42,11 +42,12 @@ node -> app : use()
                 activate rc
                 rc --> c: request created
                 deactivate rc
-                deactivate c
                 c -> med : getObjects() : objs [GET]
+
                 activate med
                 med --> c : return json objects
                 deactivate med
+                deactivate c
                 c -> m : create(objs)
                 activate m
                     note right of m

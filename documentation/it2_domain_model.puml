@@ -1,8 +1,8 @@
 @startuml "dm_it2_global"
 
 ' ### [ITERAÇÃO 1] ###
-package "Iteração 1" <<cloud>> {
-    package "Medicine BackOffice" #009FBD {
+package "Iteração 1\n" <<cloud>> {
+    package "Medicine BackOffice"  <<rectangle>> #009FBD {
 
         class Medicine {
             Name
@@ -28,8 +28,8 @@ package "Iteração 1" <<cloud>> {
 }
 
 ' ### [ITERAÇÃO 2] ###
-package "Iteração 2" <<cloud>> {
-    package "Receipts BackOffice" #43CC72 {
+package "Iteração 2\n" <<cloud>> {
+    package "Receipts BackOffice" <<rectangle>> #43CC72 {
 
         class User {
             name

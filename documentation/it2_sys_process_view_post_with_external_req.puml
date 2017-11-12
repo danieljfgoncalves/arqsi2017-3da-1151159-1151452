@@ -1,0 +1,42 @@
+@startuml
+
+title: <size:20> POST Request with external request [System Process View]</size>
+
+' Lifelines
+participant Client as cl <<HTTP>>
+box "Receipts Frontend" #ffc168
+participant Server as node <<NodeJS>>
+database ReceiptsDB as db <<MongoDB>>
+end box
+box "Medicines Backend" #1cc7d0
+participant "Medicines\nBackend" as med <<ASP.NET>>
+database MedicinesDB as db2 <<SQL>>
+end box
+
+
+' Sequence
+note over of node #00aeff: Express JS App
+cl -> node : [POST] request
+activate node #6cc24a
+    node -> node : internal\nrequest [GET]
+    note over of med #7d3f98: .NET Core 2.0
+    activate node #DarkSalmon
+    node -> med : << createRequest >>
+    activate med
+    med --> node: request created
+    node -> med : getObjects() : objs [GET]
+    med -> db2: READ
+    activate db2
+    db2 --> med : returns json objects
+    med --> node :
+    deactivate db2
+    deactivate med
+    deactivate node
+    note over db, db2 #ecb731: CRUD
+    node -> db : CREATE
+activate db #146eb4
+    db --> node : returns json objects
+deactivate db
+    node --> cl : display json\n<font color=green><b>[status: 201]
+deactivate node
+@enduml
