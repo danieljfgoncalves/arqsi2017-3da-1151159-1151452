@@ -1,0 +1,34 @@
+@startuml logical_view_proposal_02
+skinparam componentStyle uml2
+
+rectangle "This solution uses the frontend receipts\nfollowing the EAP Service pattern\nprotecting variations and lowering the coupling.\nOn the other hand the cohesion decreases too." #88FFFF
+
+rectangle "3rd iteration" #f9ff96 {
+    component [FrontOffice Receipts] as FO
+}
+
+rectangle "2nd Iteration" #43CC72 {
+    () "Receipts Functionalities Interface" as FERI
+    () "Medical Functionalities Interface" as FERI2
+    component [Frontend Receipts] as FER
+    database "Db Receipts" as DBR
+
+    FERI -- FER
+    FERI2 -- FER
+    FER - DBR
+}
+
+rectangle "1st Iteration" #009FBD {
+    () "Medicines Interface" as BEMI
+    component [Backend Medicines] as BEM
+    database "Db Medicines" as DBM
+
+    BEMI -- BEM
+    BEM - DBM
+}
+
+FO --( FERI
+FO --( FERI2
+FER --( BEMI
+
+@enduml

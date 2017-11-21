@@ -1,0 +1,34 @@
+@startuml logical_view_proposal_01
+skinparam componentStyle uml2
+
+rectangle "This solution increases the cohesion.\nOn the other hand the coupling increases." #88FFFF
+
+rectangle "3rd iteration" #f9ff96 {
+    component [FrontOffice Receipts] as FO
+}
+
+rectangle "2nd Iteration" #43CC72 {
+    () "Frontend Receipts Interface" as FERI
+    component [Frontend Receipts] as FER
+    database "Db Receipts" as DBR
+
+    FERI -- FER
+    DBR - FER
+}
+
+rectangle "1st Iteration" #009FBD {
+    () "Chamadas autenticadas" as BEMI
+    () "GETs sem autenticação\n(resolve problema do utilizador anónimo)" as BEMI2
+    component [Backend Medicines] as BEM
+    database "Db Medicines" as DBM
+
+    BEMI -- BEM
+    BEMI2 -- BEM
+    BEM - DBM
+}
+
+FO --( FERI
+FO --( BEMI2
+FER --( BEMI
+
+@enduml
