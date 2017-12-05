@@ -24,6 +24,7 @@ namespace ElectronicPrescription.Controllers
         }
 
         // GET: api/Presentations
+        [AllowAnonymous]
         [HttpGet]
         public IEnumerable<PresentationDTO> GetPresentation()
         {
@@ -40,6 +41,7 @@ namespace ElectronicPrescription.Controllers
         }
 
         // GET: api/Presentations/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPresentation([FromRoute] int id)
         {
