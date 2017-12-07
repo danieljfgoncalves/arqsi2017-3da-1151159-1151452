@@ -12,6 +12,7 @@ var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var index = require('./routes/index');
 var medicalReceipts = require('./routes/medicalReceipts');
 var patients = require('./routes/patients');
+var comments = require('./routes/comments');
 var authentication = require('./routes/authentication');
 
 var app = express();
@@ -45,6 +46,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/api/', medicalReceipts);
 app.use('/api/', patients);
+app.use('/api/', comments);
 app.use('/api/', authentication);
 
 // catch 404 and forward to error handler
