@@ -1,14 +1,13 @@
-import { AppPage } from './app.po';
+import { MatngularPage } from './app.po';
 
-describe('frontend-electronic-prescriptions App', () => {
-  let page: AppPage;
+describe('matngular App', () => {
+  let page: MatngularPage;
 
   beforeEach(() => {
-    page = new AppPage();
+    page = new MatngularPage();
   });
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Welcome to app!');
+  it('should expect true to be true', () => {
+    expect(true).toBe(true);
   });
 });
