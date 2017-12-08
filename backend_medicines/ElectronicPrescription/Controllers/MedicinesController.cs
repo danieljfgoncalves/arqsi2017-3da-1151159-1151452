@@ -24,6 +24,7 @@ namespace ElectronicPrescription.Controllers
         }
 
         // GET: api/Medicines or api/Medicines/?name={name}
+        [AllowAnonymous]
         [HttpGet]
         public IEnumerable<MedicineDTO> GetMedicine([FromQuery] string name = "")
         {
@@ -47,6 +48,7 @@ namespace ElectronicPrescription.Controllers
         }
 
         // GET: api/Medicines/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMedicine([FromRoute] int id)
         {
@@ -71,6 +73,7 @@ namespace ElectronicPrescription.Controllers
         }
 
         // GET: api/Medicines/5/presentations
+        [AllowAnonymous]
         [HttpGet("{id}/Presentations")]
         public async Task<IActionResult> GetPresentationsByMedicine([FromRoute] int id)
         {

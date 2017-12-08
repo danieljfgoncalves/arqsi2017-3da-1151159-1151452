@@ -28,13 +28,39 @@ namespace ElectronicPrescription.Controllers
         [HttpGet]
         public IEnumerable<PresentationDTO> GetPresentation()
         {
+
             var presentations = from p in _context.Presentation
+                                    .Include(pr => pr.PackageLeaflet)
+                                    .ThenInclude(pk => pk.GenericPosology)
                                 select new PresentationDTO()
                                 {
                                     PresentationId = p.PresentationId,
                                     Form = p.Form,
                                     Concentration = p.Concentration,
-                                    Quantity = p.Quantity
+                                    Quantity = p.Quantity,
+                                    Drug = 
+                                        new DrugDTO()
+                                        {
+                                            DrugId = p.Drug.DrugId,
+                                            Name = p.Drug.Name
+                                        },
+                                    Medicines = p.Drug.Medicine.Select(m => 
+                                        new MedicineDTO()
+                                        {
+                                            MedicineId = m.MedicineId,
+                                            Name = m.Name
+                                        }),
+                                    Posologies = p.Drug.Presentation.SelectMany(pr =>
+                                        pr.PackageLeaflet.Select(pk =>
+                                        pk.GenericPosology)).Select(ps =>
+                                        new PosologyDTO()
+                                        {
+                                            PosologyId = ps.PosologyId,
+                                            Quantity = ps.Quantity,
+                                            Technique = ps.Technique,
+                                            Interval = ps.Interval,
+                                            Period = ps.Period
+                                        })
                                 };
 
             return presentations;
