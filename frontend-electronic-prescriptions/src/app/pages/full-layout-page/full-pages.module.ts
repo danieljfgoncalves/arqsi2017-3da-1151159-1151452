@@ -3,7 +3,8 @@ import { CommonModule } from "@angular/common";
 
 import { FullPagesRoutingModule } from "./full-pages-routing.module";
 
-import { FullLayoutPageComponent } from './full-layout-page.component';
+import { FullLayoutPageComponent } from './example/full-layout-page.component';
+import { ChangeLogComponent } from 'app/changelog/changelog.component';
 
 @NgModule({
     imports: [
@@ -11,7 +12,8 @@ import { FullLayoutPageComponent } from './full-layout-page.component';
         FullPagesRoutingModule   
     ],
     declarations: [       
-        FullLayoutPageComponent
+        FullLayoutPageComponent,
+        ChangeLogComponent
     ]
 })
 export class FullPagesModule { }

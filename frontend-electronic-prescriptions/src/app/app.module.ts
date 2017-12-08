@@ -7,6 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { FullLayoutComponent } from "./layouts/full/full-layout.component";
+import { ContentLayoutComponent } from 'app/layouts/content/content-layout.component';
 
 /* Common */
 import { HttpClientModule } from '@angular/common/http';
@@ -23,7 +24,8 @@ import * as $ from 'jquery';
 @NgModule({
     declarations: [
         AppComponent,
-        FullLayoutComponent
+        FullLayoutComponent,
+        ContentLayoutComponent
     ],
     imports: [
         BrowserAnimationsModule,
