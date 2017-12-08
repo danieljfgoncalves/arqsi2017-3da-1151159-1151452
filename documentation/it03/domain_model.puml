@@ -1,0 +1,67 @@
+@startuml "domain_model_it3"
+
+package "Electronic Prescriptions Frontend" <<rectangle>> #43CC72 {
+    
+    class User {
+        name: string
+        email: string
+        password: string
+        roles: Role[]
+    }
+    enum Role {
+        Physician
+        Patient
+        Pharmacist
+        Admin
+    }
+    class MedicalReceipt {
+        prescriptions: Prescription[]
+        creationDate: Date
+        physician: User
+        patient: User
+    }
+    class Prescription {
+        expirationDate: Date
+        quantity: int
+        presentation: Presentation
+        posology: Posology
+        medicine: string
+        fills: Fill[]
+    }
+    class Fill {
+        date: Date
+        quantity: int
+    }
+    class Presentation {
+        drug: string
+        medicines: string[]
+        posologies: Posology[]
+        form: string
+        concentration: string
+        quantity: string
+        comments: Comment[]
+    }
+    class Posology {
+        quantity: string
+        technique: string
+        interval: string
+        period: string
+    }
+    class Comment {
+        comment: string
+        physician: User
+    }
+}
+
+User "1" <- "*" MedicalReceipt : physician
+User "1" <- "*" MedicalReceipt : patient
+MedicalReceipt "1" -> "*" Prescription
+User "1" <-- "*" Comment
+User "*" --> "*" Role
+Role -[hidden] Comment
+Comment "*" <- "1" Presentation
+Presentation "1" -> "*" Posology : generic
+Prescription "*" --> "1" Presentation
+Prescription "1" -> "*" Fill
+Prescription "*" --> "1" Posology : prescribed
+@enduml
