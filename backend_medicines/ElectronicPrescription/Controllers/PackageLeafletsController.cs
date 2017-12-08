@@ -24,6 +24,7 @@ namespace ElectronicPrescription.Controllers
         }
 
         // GET: api/PackageLeaflets
+        [AllowAnonymous]
         [HttpGet]
         public IEnumerable<PackageLeafletDTO> GetPackageLeaflet()
         {
@@ -38,6 +39,7 @@ namespace ElectronicPrescription.Controllers
         }
 
         // GET: api/PackageLeaflets/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPackageLeaflet([FromRoute] int id)
         {

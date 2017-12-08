@@ -99,6 +99,7 @@ namespace ElectronicPrescription.Controllers
         }
 
         // GET: api/Medicines/5/posologies
+        [AllowAnonymous]
         [HttpGet("{id}/Posologies")]
         public async Task<IActionResult> GetPosologiesByMedicine([FromRoute] int id)
         {

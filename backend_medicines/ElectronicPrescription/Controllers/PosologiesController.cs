@@ -24,6 +24,7 @@ namespace ElectronicPrescription.Controllers
         }
 
         // GET: api/Posologies
+        [AllowAnonymous]
         [HttpGet]
         public IEnumerable<PosologyDTO> GetPosology()
         {
@@ -41,6 +42,7 @@ namespace ElectronicPrescription.Controllers
         }
 
         // GET: api/Posologies/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPosology([FromRoute] int id)
         {
