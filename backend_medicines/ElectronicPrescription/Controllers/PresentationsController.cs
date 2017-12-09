@@ -76,15 +76,39 @@ namespace ElectronicPrescription.Controllers
                 return BadRequest(ModelState);
             }
 
-            var presentation = await _context.Presentation.Select(p =>
-                                new PresentationDTO()
+            var presentation = await _context.Presentation
+                                .Select(p =>
+                                 new PresentationDTO()
                                 {
                                     PresentationId = p.PresentationId,
                                     Form = p.Form,
                                     Concentration = p.Concentration,
-                                    Quantity = p.Quantity
-                                }
-                                ).SingleOrDefaultAsync(p => p.PresentationId == id);
+                                    Quantity = p.Quantity,
+                                    Drug =
+                                        new DrugDTO()
+                                        {
+                                            DrugId = p.Drug.DrugId,
+                                            Name = p.Drug.Name
+                                        },
+                                    Medicines = p.Drug.Medicine.Select(m =>
+                                        new MedicineDTO()
+                                        {
+                                            MedicineId = m.MedicineId,
+                                            Name = m.Name
+                                        }),
+                                    Posologies = p.Drug.Presentation.SelectMany(pr =>
+                                        pr.PackageLeaflet.Select(pk =>
+                                        pk.GenericPosology)).Select(ps =>
+                                        new PosologyDTO()
+                                        {
+                                            PosologyId = ps.PosologyId,
+                                            Quantity = ps.Quantity,
+                                            Technique = ps.Technique,
+                                            Interval = ps.Interval,
+                                            Period = ps.Period
+                                        })
+                                })
+                                .SingleOrDefaultAsync(p => p.PresentationId == id);
 
             if (presentation == null)
             {
