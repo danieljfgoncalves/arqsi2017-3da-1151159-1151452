@@ -1,6 +1,5 @@
 // ./config.js
 
-
 // App Configurations
 module.exports = {
 
