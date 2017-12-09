@@ -48,7 +48,7 @@ export class AuthService {
             }
 
             localStorage.userInfo = JSON.stringify(this.userInfo);
-            localStorage.token = JSON.stringify(data.token);
+            localStorage.token = data.token;
 
             localStorage.removeItem('anonymous');
 
