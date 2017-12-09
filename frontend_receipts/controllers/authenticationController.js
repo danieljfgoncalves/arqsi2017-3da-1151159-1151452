@@ -62,7 +62,10 @@ exports.postAuthentication = function (req, res) {
                 // we don't want to pass in the entire user since that has the password
                 const payload = {
                     roles: user.roles,
-                    userID: user._id
+                    userID: user._id,
+                    name: user.name,
+                    email: user.email,
+                    mobile: user.mobile
                 };
                 var token = jwt.sign(payload, config.secret, {
                     expiresIn: config.token_duration
@@ -80,3 +83,27 @@ exports.postAuthentication = function (req, res) {
 
     });
 }
+
+// GET /api/users/{id}
+exports.getUser = (req, res) => {
+
+    User.findById(req.params.id, (err, user) => {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        if (!user) {
+            res.status(404).json({"Message":"No user found with the given ID."});
+            return;
+        }
+        var userDTO = {
+            roles: user.roles,
+            userID: user._id,
+            name: user.name,
+            email: user.email,
+            mobile: user.mobile
+        }
+        res.status(200).json(userDTO);
+    });
+
+};
