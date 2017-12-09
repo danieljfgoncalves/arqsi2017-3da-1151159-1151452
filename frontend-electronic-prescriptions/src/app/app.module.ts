@@ -18,6 +18,8 @@ import { AuthGuard } from './shared/auth/auth-guard.service';
 
 import * as $ from 'jquery';
 
+import { PresentationService } from './presentation.service';
+
 
 
 
@@ -36,7 +38,8 @@ import * as $ from 'jquery';
     ],
     providers: [
         AuthService,
-        AuthGuard
+        AuthGuard,
+        PresentationService
     ],
     bootstrap: [AppComponent]
 })

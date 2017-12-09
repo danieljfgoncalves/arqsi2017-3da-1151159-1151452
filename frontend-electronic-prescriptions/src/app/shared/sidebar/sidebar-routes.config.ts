@@ -9,6 +9,9 @@ export const ROUTES: RouteInfo[] = [
         path: '/content-layout/login', title: 'Login', icon: 'ft-square', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
     },
     {
+        path: '/main/presentations', title: 'Presentaions', icon: 'ft-list', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
+    },
+    {
         path: '', title: 'Receipts', icon: 'ft-clipboard', class: 'has-sub', badge: '', badgeClass: '', isExternalLink: false,
         submenu: [
             { path: 'javascript:;', title: 'Consult', icon: 'ft-search', class: '', badge: '', badgeClass: '', isExternalLink: true, submenu: [] },

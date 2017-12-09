@@ -5,6 +5,7 @@ import { FullPagesRoutingModule } from "./full-pages-routing.module";
 
 import { FullLayoutPageComponent } from './example/full-layout-page.component';
 import { ChangeLogComponent } from 'app/changelog/changelog.component';
+import { PresentationsComponent } from './presentations/presentations.component';
 
 @NgModule({
     imports: [
@@ -13,7 +14,8 @@ import { ChangeLogComponent } from 'app/changelog/changelog.component';
     ],
     declarations: [       
         FullLayoutPageComponent,
-        ChangeLogComponent
+        ChangeLogComponent,
+        PresentationsComponent
     ]
 })
 export class FullPagesModule { }

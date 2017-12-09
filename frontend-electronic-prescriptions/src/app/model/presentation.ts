@@ -8,5 +8,5 @@ export class Presentation {
     form: string;
     concentration: string;
     quantity: string;
-    comments: Comment[]
+    comments: Comment[];
 }
