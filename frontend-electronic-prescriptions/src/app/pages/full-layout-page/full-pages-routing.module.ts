@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { FullLayoutPageComponent } from 'app/pages/full-layout-page/example/full-layout-page.component';
 import { PresentationsComponent } from 'app/pages/full-layout-page/presentations/presentations.component';
 import { ChangeLogComponent } from 'app/changelog/changelog.component';
+import { PresentationDetailComponent } from 'app/pages/full-layout-page/presentation-detail/presentation-detail.component';
 
 const routes: Routes = [
   {
@@ -13,21 +14,28 @@ const routes: Routes = [
         path: 'dashboard',
         component: ChangeLogComponent,
         data: {
-          title: 'Change Log Page'
+          title: 'Dashboard Page'
         }
       },
       {
         path: 'example',
         component: FullLayoutPageComponent,
         data: {
-          title: 'Change Log Page'
+          title: 'Example Page'
         }
       },
       {
         path: 'presentations',
         component: PresentationsComponent,
         data: {
-          title: 'Change Log Page'
+          title: 'Presentations Page'
+        }
+      },
+      {
+        path: 'presentations/:id',
+        component: PresentationDetailComponent,
+        data: {
+          title: 'Presentation Details Page'
         }
       },
       // {

@@ -1,0 +1,24 @@
+<div *ngIf="presentation">
+  <h2>Presentation for Drug {{presentation.drug}}</h2>
+  <p>
+    Medicines: <span *ngFor="let med of presentation.medicines">{{med}} </span>
+  </p>
+  <table class="table">
+      <thead>
+        <tr>
+            <th>Interval</th>
+            <th>Period</th>
+            <th>Quantity</th>
+            <th>Technique</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pos of presentation.posologies">
+            <td>{{pos.interval}}</td>
+            <td>{{pos.period}}</td>
+            <td>{{pos.quantity}}</td>
+            <td>{{pos.technique}}</td>
+        </tr>
+      </tbody>
+    </table>
+</div>
