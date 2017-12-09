@@ -20,7 +20,7 @@ export class AuthService {
   private urlRegister: string = environment.receipts_frontend.url + '/api/register';
 
   private token: Token;
-  private auth: Subject<User> = new Subject<User>();
+  public auth: Subject<User> = new Subject<User>();
   private userInfo: User;
 
   constructor(private http: HttpClient) {
@@ -81,6 +81,10 @@ export class AuthService {
 
   getToken() {    
     return localStorage.getItem('token');
+  }
+
+  getUserInfo() {
+    return this.userInfo;
   }
 
   isAuthenticated() {
