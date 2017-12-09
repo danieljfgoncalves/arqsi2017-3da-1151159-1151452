@@ -37,6 +37,8 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 if (app.get('env') != 'test') app.use(logger('dev'));
+
+// CORS
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
