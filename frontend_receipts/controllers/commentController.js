@@ -129,3 +129,19 @@ exports.delete_comment = (req, res) => {
         res.json({"Message":"Successfully deleted"});
     });
 };
+
+// GET /api/comments/presentation/{id}
+exports.get_comments_of_presentation = (req, res) => {
+    if ( !( req.roles.includes(roles.Role.ADMIN) || 
+            req.roles.includes(roles.Role.PHYSICIAN) ) ) {
+        res.status(401).json({"Message":"Unauthorized User."});
+        return;
+    }
+
+    Comment.find({"presentationID":req.params.id}, (err, comments) => {
+        if (err) {
+            res.status(500).send(err);
+        }
+        res.status(200).json(comments);
+    });
+};

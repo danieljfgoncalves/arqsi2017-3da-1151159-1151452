@@ -25,4 +25,7 @@ router.put('/comments/:id', comments_controller.put_comment);
 // DELETE /api/comments/{id}
 router.delete('/comments/:id', comments_controller.delete_comment);
 
+// GET /api/comments/presentation/{id}
+router.get('/comments/presentation/:id', comments_controller.get_comments_of_presentation);
+
 module.exports = router;
