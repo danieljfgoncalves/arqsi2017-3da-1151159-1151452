@@ -10,11 +10,11 @@
   </thead>
   <tbody>
     <tr *ngFor="let presentation of presentations">
-        <td>{{presentation.drug.name}}</td>
+        <td>{{presentation.drug}}</td>
         <td>{{presentation.form}}</td>
         <td>{{presentation.concentration}}</td>
         <td>{{presentation.quantity}}</td>
-        <td><span *ngFor="let m of presentation.medicines">{{m.name}} </span></td>
+        <td><span *ngFor="let med of presentation.medicines">{{med}} </span></td>
     </tr>
   </tbody>
 </table>

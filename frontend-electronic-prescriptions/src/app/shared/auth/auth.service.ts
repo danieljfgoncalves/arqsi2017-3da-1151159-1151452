@@ -25,7 +25,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) {
     this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    this.token = JSON.parse(localStorage.getItem('token'));
+    this.token = JSON.parse(JSON.stringify(localStorage.getItem('token')));
     console.log("[constructor]userinfo: " 
     + ((this.userInfo) ? this.userInfo.roles[0] + this.userInfo.id : "null"));
   }

@@ -9,51 +9,101 @@ import 'rxjs/add/operator/map'
 import { Presentation } from './model/presentation';
 import { Comment } from './model/comment';
 import { Posology } from 'app/model/posology';
+import { AuthService } from 'app/shared/auth/auth.service';
 
 @Injectable()
 export class PresentationService {
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
 
   getPresentations(): Observable<Presentation[]> {
     const url = environment.medicines_backend.url + '/api/presentations';
-    return this.http.get<Presentation[]>(url);
+    return this.http.get<Presentation[]>(url).map(res => {
+      let presentations: Presentation[] = new Array();
+
+      let presentationsJSON = JSON.parse(JSON.stringify(res));
+      console.log(presentationsJSON);
+      for(var i = 0; i < presentationsJSON.length; i++) {
+        presentations[i] = this.mapPresentation(presentationsJSON[i]);
+        console.log(presentations[i]);
+      }
+
+      return presentations;
+    });
   }
 
   getPresentation(id: number): Observable<Presentation> {
     const url = environment.medicines_backend.url + '/api/presentations/' + `${id}`;
     return this.http.get(url)
     .map((res: Response) => {
-
-      let obj = JSON.parse(JSON.stringify(res));
-
-      let medicines: string[] = new Array();
-      for(var i=0; i< obj.medicines.length; i++) {
-        medicines[i] = obj.medicines[i].name;
-      }
-
-      let posologies: Posology[] = new Array();
-      for(var i=0; i< obj.medicines.length; i++) {
-        let posology: Posology = new Posology(
-          obj.posologies[i].quantity,
-          obj.posologies[i].technique,
-          obj.posologies[i].interval,
-          obj.posologies[i].period
-        );
-        posologies[i] = posology;
-      }
-
-      // TODO get comments
-
-      return new Presentation(
-        obj.drug.name, medicines, posologies, 
-        obj.form, obj.concentration, obj.quantity, null);
+      let presentationJSON = JSON.parse(JSON.stringify(res));
+      return this.mapPresentation(presentationJSON);
     });
   }
 
-  /*getComments(presentationID: number): Observable<Object> {
-    const url = environment.receipts_frontend.url + '/api/comments/' + `${presentationID}`;
-    return this.http.get(url).filter(obj => obj.);
-  }*/
+  mapPresentation(presentationJSON): Presentation {
+
+    let medicines: string[] = new Array();
+    for(var i=0; i< presentationJSON.medicines.length; i++) {
+      medicines[i] = presentationJSON.medicines[i].name;
+    }
+
+    let posologies: Posology[] = new Array();
+    for(var i=0; i< presentationJSON.medicines.length; i++) {
+      let posology: Posology = new Posology(
+        presentationJSON.posologies[i].quantity,
+        presentationJSON.posologies[i].technique,
+        presentationJSON.posologies[i].interval,
+        presentationJSON.posologies[i].period
+      );
+      posologies[i] = posology;
+    }
+
+    //let comments: Comment[];
+    //this.getComments(presentationJSON.presentationId).subscribe(c => comments = c);
+
+    return new Presentation(
+      presentationJSON.drug.name, medicines, posologies, 
+      presentationJSON.form, presentationJSON.concentration, presentationJSON.quantity, null);
+  }
+
+  getComments(presentationID: number): Observable<Comment[]> {
+
+    let url = environment.receipts_frontend.url + '/api/comments/' + `${presentationID}`;
+    console.log(url);
+    let token = this.authService.getToken();
+    console.log(token);
+    let httpOptions = {
+      headers: new HttpHeaders({ 
+        'Content-Type': 'application/json',
+        'x-access-token': token
+      })
+    };
+    console.log(httpOptions);
+
+    return this.http.get(url, httpOptions).map((res: Response) => {
+
+      let comments: Comment[] = new Array();
+
+      let commentsJSON = JSON.parse(JSON.stringify(res));
+      console.log("COMMENTSJSON: ");
+      console.log(commentsJSON);
+
+      for(var i=0; i< commentsJSON; i++) {
+        comments[i] = new Comment(
+          commentsJSON.comment,
+          commentsJSON.physician
+        );
+        console.log("COMMENTS[i]: ");
+        console.log(comments[i]);
+      }
+
+      return comments;
+    });
+
+  }
 
 }
