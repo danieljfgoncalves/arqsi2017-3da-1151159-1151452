@@ -1,30 +1,106 @@
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import * as jwt_decode from 'jwt-decode';
+import { tokenNotExpired } from 'angular2-jwt';
+import { User } from '../../model/user';
+import { Role } from '../../model/role';
+
+// inner class
+class Token { token: string };
 
 @Injectable()
 export class AuthService {
-  token: string;
 
-  constructor() {}
+  private urlAuth: string = environment.receipts_frontend.url + '/api/authenticate';
+  private urlRegister: string = environment.receipts_frontend.url + '/api/register';
 
-  signupUser(email: string, password: string) {
+  private token: Token;
+  private auth: Subject<User> = new Subject<User>();
+  private userInfo: User;
+
+  constructor(private http: HttpClient) {
+    this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    this.token = JSON.parse(localStorage.getItem('token'));
+    console.log("[constructor]userinfo: " 
+    + ((this.userInfo) ? this.userInfo.roles[0] + this.userInfo.id : "null"));
+  }
+
+  signupUser(name: string, password: string) {
     //your code for signing up the new user
   }
 
-  signinUser(email: string, password: string) {
+  signinUser(name: string, password: string): Observable<boolean> {
     //your code for checking credentials and getting tokens for for signing in user
+
+    return new Observable<boolean>(observer => {
+      this.http.post<Token>(this.urlAuth, { name: name, password: password })
+        .subscribe(data => {
+          if (data.token) {
+            const tokenDecoded = jwt_decode(data.token);
+            this.userInfo = {
+              id: tokenDecoded.userID,
+              roles: tokenDecoded.roles
+            }
+
+            localStorage.userInfo = JSON.stringify(this.userInfo);
+            localStorage.token = JSON.stringify(data.token);
+
+            localStorage.removeItem('anonymous');
+
+            this.auth.next(this.userInfo);
+            observer.next(true);
+          } else {
+            this.auth.next(this.userInfo);
+            observer.next(false);
+          }
+        },
+        (err: HttpErrorResponse) => {
+          if (err.error instanceof Error) {
+            console.log("Client-side error occured.");
+          } else {
+            console.log("Server-side error occured.");
+          } console.log(err);
+          this.auth.next(this.userInfo);
+          observer.next(false);
+        });
+    });
   }
 
   logout() {   
     this.token = null;
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('token');
+    localStorage.removeItem('anonymous');
+    this.auth.next(this.userInfo);
   }
 
   getToken() {    
-    return this.token;
+    return localStorage.getItem('token');
   }
 
   isAuthenticated() {
     // here you can check if user is authenticated or not through his token 
-    return true;
+    return tokenNotExpired();
+  }
+
+  hasRole(role : Role) {
+    // here you can check the user's role
+    return this.userInfo.roles.includes(role);
+  }
+
+  toggleAnonymous() {
+
+    if (!localStorage.getItem('anonymous')) {
+      localStorage.anonymous = JSON.stringify(true);
+    }
+  }
+
+  isAnonymous() {
+    return localStorage.getItem('anonymous') != undefined;
   }
 }

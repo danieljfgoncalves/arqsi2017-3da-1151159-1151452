@@ -4,23 +4,24 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from "./shared/shared.module";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClientModule } from '@angular/common/http';
 
+// Components
 import { AppComponent } from './app.component';
 import { FullLayoutComponent } from "./layouts/full/full-layout.component";
 import { ContentLayoutComponent } from 'app/layouts/content/content-layout.component';
 
-/* Common */
-import { HttpClientModule } from '@angular/common/http';
-
-
+// Services
 import { AuthService } from './shared/auth/auth.service';
 import { AuthGuard } from './shared/auth/auth-guard.service';
+import { PhyscianAuthGuard } from './shared/auth/physician-auth-guard.service';
+import { PharmacistAuthGuard } from './shared/auth/pharmacist-auth-guard.service';
+import { PatientAuthGuard } from './shared/auth/patient-auth-guard.service';
+import { PresentationService } from './presentation.service';
+import { MedicalReceiptService } from './shared/medical-receipts/medical-receipt.service'
+
 
 import * as $ from 'jquery';
-
-import { PresentationService } from './presentation.service';
-
-
 
 
 @NgModule({
@@ -39,7 +40,11 @@ import { PresentationService } from './presentation.service';
     providers: [
         AuthService,
         AuthGuard,
-        PresentationService
+        PatientAuthGuard,
+        PharmacistAuthGuard,
+        PhyscianAuthGuard,
+        PresentationService,
+        MedicalReceiptService
     ],
     bootstrap: [AppComponent]
 })

@@ -10,22 +10,22 @@
                     <div class="card-body">
                         <div class="card-block">
                             <h2>Login</h2>
-                            <form novalidate="" (ngSubmit)="onSubmit()" #f="ngForm">
+                            <form name="form" (ngSubmit)="f.form.valid && onLogin()" #f="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="Email" ngModel required email>
+                                        <input type="text" class="form-control" name="name" placeholder="Username" [(ngModel)]="model.name" #name="ngModel" required />
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="password" class="form-control" name="inputPass" id="inputPass" placeholder="Password" ngModel required>
+                                        <input type="password" class="form-control" name="pass" placeholder="Password" [(ngModel)]="model.passwd" #passwd="ngModel" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <button type="button" class="btn btn-pink btn-block btn-raised" (click)="onSubmit()">Login</button>
-                                        <button type="button" class="btn btn-secondary btn-block btn-raised">Anonymous</button>
+                                        <button type="button" class="btn btn-pink btn-block btn-raised" (click)="onLogin()">Login</button>
+                                        <button type="button" class="btn btn-secondary btn-block btn-raised" (click)="onAnonymous()">Anonymous</button>
                                     </div>
                                 </div>
                             </form>
