@@ -10,9 +10,6 @@ export class AuthGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 
-    let b1 = this.authService.isAuthenticated();
-    let b2 = this.authService.isAnonymous();
-
     // If authenticated or anonymous continue to app
     if (this.authService.isAuthenticated() || this.authService.isAnonymous()) return true;
     // Else try logging in
