@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { FullLayoutPageComponent } from 'app/pages/full-layout-page/example/full-layout-page.component';
+import { PresentationsComponent } from 'app/pages/full-layout-page/presentations/presentations.component';
 import { ChangeLogComponent } from 'app/changelog/changelog.component';
 
 const routes: Routes = [
@@ -18,6 +19,13 @@ const routes: Routes = [
       {
         path: 'example',
         component: FullLayoutPageComponent,
+        data: {
+          title: 'Change Log Page'
+        }
+      },
+      {
+        path: 'presentations',
+        component: PresentationsComponent,
         data: {
           title: 'Change Log Page'
         }

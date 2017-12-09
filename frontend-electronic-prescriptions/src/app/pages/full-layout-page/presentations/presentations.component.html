@@ -1,0 +1,20 @@
+<table class="table">
+  <thead>
+    <tr>
+        <th>Drug</th>
+        <th>Form</th>
+        <th>Concentration</th>
+        <th>Quantity</th>
+        <th>Medicines</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let presentation of presentations">
+        <td>{{presentation.drug.name}}</td>
+        <td>{{presentation.form}}</td>
+        <td>{{presentation.concentration}}</td>
+        <td>{{presentation.quantity}}</td>
+        <td><span *ngFor="let m of presentation.medicines">{{m.name}} </span></td>
+    </tr>
+  </tbody>
+</table>
