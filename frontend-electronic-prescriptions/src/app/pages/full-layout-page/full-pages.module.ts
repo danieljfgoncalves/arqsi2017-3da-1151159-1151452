@@ -11,13 +11,16 @@ import { PresentationDetailComponent } from './presentation-detail/presentation-
 import { MedicalReceiptConsultPageComponent } from 'app/pages/full-layout-page/receipts-consult-page/receipts-consult-page.component';
 import { FormsModule } from '@angular/forms';
 import { FillsComponent } from 'app/shared/fills/fills.component';
+import { MedicalReceiptCreatePageComponent } from 'app/pages/full-layout-page/receipts-create-page/receipts-create-page.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
         CommonModule,
         FullPagesRoutingModule,
         NgbModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule
     ],
     declarations: [       
         FullLayoutPageComponent,
@@ -25,7 +28,8 @@ import { FillsComponent } from 'app/shared/fills/fills.component';
         PresentationsComponent,
         PresentationDetailComponent,
         MedicalReceiptConsultPageComponent,
-        FillsComponent
+        FillsComponent,
+        MedicalReceiptCreatePageComponent
     ]
 })
 export class FullPagesModule { }

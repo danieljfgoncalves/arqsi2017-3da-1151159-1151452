@@ -8,6 +8,6 @@ export interface RouteInfo {
     badge: string;
     badgeClass: string;
     isExternalLink: boolean;
-    //allowedRoles: Role[];
+    allowedRoles: Role[];
     submenu : RouteInfo[];
 }

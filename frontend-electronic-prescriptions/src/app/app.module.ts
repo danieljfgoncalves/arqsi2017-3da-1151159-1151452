@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from "./shared/shared.module";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 
 // Components
 import { AppComponent } from './app.component';
@@ -20,10 +21,10 @@ import { PatientAuthGuard } from './shared/auth/patient-auth-guard.service';
 import { PresentationService } from './presentation.service';
 import { MedicalReceiptService } from './shared/medical-receipts/medical-receipt.service'
 import { UserService } from 'app/shared/user.service';
+import { CheckRoleGuard } from 'app/shared/auth/check-role-guard.service';
 
 
 import * as $ from 'jquery';
-import { CheckRoleGuard } from 'app/shared/auth/check-role-guard.service';
 import { PrescriptionService } from 'app/shared/prescription.service';
 
 
@@ -38,7 +39,8 @@ import { PrescriptionService } from 'app/shared/prescription.service';
         AppRoutingModule,
         SharedModule,
         HttpClientModule,
-        NgbModule.forRoot()
+        NgbModule.forRoot(),
+        ReactiveFormsModule
     ],
     providers: [
         AuthService,
