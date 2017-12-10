@@ -1,7 +1,9 @@
 // controllers/commentController.js
 
+var async = require('async');
 var roles = require('../models/roles');
 var Comment = require('../models/comment');
+var User = require('../models/user');
 
 // GET /api/comments
 exports.get_comments = (req, res) => {
@@ -15,7 +17,41 @@ exports.get_comments = (req, res) => {
         if (err) {
             res.status(500).send(err);
         }
-        res.status(200).json(comments);
+
+        var commentsDTO = [];
+
+        async.each(comments, (comment, callback) => {
+
+            new Promise( (resolve, reject) => {
+                User.findById(comment.physician, (err, user) => {
+                    var physicianDTO = {
+                        roles: user.roles,
+                        userID: user._id,
+                        name: user.name,
+                        email: user.email,
+                        mobile: user.mobile
+                    };
+                    resolve(physicianDTO);
+                });
+            }).then(physicianDTO => {
+                var commentDTO = {
+                    "_id": comment._id,
+                    "comment": comment.comment,
+                    "physician": physicianDTO,
+                    "presentationID": comment.presentationID
+                }
+                commentsDTO.push(commentDTO);
+                callback();
+            });
+
+        }, err2 => {
+
+            if (err2) {
+                res.status(500).send(err2);
+            }
+            res.status(200).json(commentsDTO);
+
+        })
     });
 };
 
@@ -36,7 +72,28 @@ exports.get_comment = (req, res) => {
             res.status(404).json({"Message":"No comment found with the given ID."});
             return;
         }
-        res.status(200).json(comment);
+
+        new Promise( (resolve, reject) => {
+            User.findById(comment.physician, (err, user) => {
+                var physicianDTO = {
+                    roles: user.roles,
+                    userID: user._id,
+                    name: user.name,
+                    email: user.email,
+                    mobile: user.mobile
+                };
+                resolve(physicianDTO);
+            });
+        }).then(physicianDTO => {
+            var commentDTO = {
+                "_id": comment._id,
+                "comment": comment.comment,
+                "physician": physicianDTO,
+                "presentationID": comment.presentationID
+            }
+            res.status(200).json(commentDTO);
+        });
+
     });
 };
 
@@ -142,6 +199,40 @@ exports.get_comments_of_presentation = (req, res) => {
         if (err) {
             res.status(500).send(err);
         }
-        res.status(200).json(comments);
+
+        var commentsDTO = [];
+
+        async.each(comments, (comment, callback) => {
+
+            new Promise( (resolve, reject) => {
+                User.findById(comment.physician, (err, user) => {
+                    var physicianDTO = {
+                        roles: user.roles,
+                        userID: user._id,
+                        name: user.name,
+                        email: user.email,
+                        mobile: user.mobile
+                    };
+                    resolve(physicianDTO);
+                });
+            }).then(physicianDTO => {
+                var commentDTO = {
+                    "_id": comment._id,
+                    "comment": comment.comment,
+                    "physician": physicianDTO,
+                    "presentationID": comment.presentationID
+                }
+                commentsDTO.push(commentDTO);
+                callback();
+            });
+
+        }, err2 => {
+
+            if (err2) {
+                res.status(500).send(err2);
+            }
+            res.status(200).json(commentsDTO);
+
+        })
     });
 };
