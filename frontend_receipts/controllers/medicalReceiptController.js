@@ -21,8 +21,8 @@ exports.get_medical_receipts_list = function (req, res) {
     if (req.roles.includes(roles.Role.ADMIN)) {
 
         MedicalReceipt.find(function (err1, medicalReceipts) {
-            if (err) {
-                res.status(500).send(err);
+            if (err1) {
+                res.status(500).send(err1);
             }
             var mrs = [];
             var patientDTO, physicianDTO;
