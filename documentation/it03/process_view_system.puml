@@ -1,0 +1,31 @@
+@startuml system_process_view.puml
+
+title: <size:20> Comment Presentation [Process View]</size>
+
+' Lifelines
+actor Physician as u
+' participant Client as cl <<HTTP>>
+participant ElectronicPrescriptionFrontend as angular <<Angular>>
+participant FrontendReceipts as node <<NodeJS>>
+database FrontendReceiptsDB as dbnode <<MongoDB>>
+participant BackendMedicines as asp <<ASP.NET>>
+database BackendMedicines as dbasp <<MSSQL>>
+
+' Sequence
+
+u -> angular : navigate to page
+angular -> asp : [GET] presentations (no authentication required)
+asp -> dbasp : getPresentations()
+
+u -> angular : select presentation
+angular -> asp : getByID(idPresentation)
+asp -> dbasp : getByID(idPresentation)
+angular -> angular : show presentation details
+angular -> node : getComments(idPresentation)
+node -> dbnode : getComments(idPresentation)
+
+u -> angular : insert comment
+angular -> node : saveComment(comment, presentation)
+node -> dbnode : saveComment(comment, presentation)
+
+@enduml
