@@ -74,7 +74,14 @@ exports.get_patients = (req, res) => {
         var usersDTO = [];
         users.forEach(user => user.roles.forEach(role => {
             if (role === roles.Role.PATIENT) {
-                usersDTO.push(user);
+                userDTO = {
+                    roles: user.roles,
+                    userID: user._id,
+                    name: user.name,
+                    email: user.email,
+                    mobile: user.mobile
+                }
+                usersDTO.push(userDTO);
             }
         }));
         res.status(200).json(usersDTO);
