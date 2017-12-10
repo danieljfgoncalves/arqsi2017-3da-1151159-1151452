@@ -23,6 +23,15 @@
   </table>
 
   <h2>Comments</h2>
+  <section class="card">
+    <div class="card-header">
+      <h4 class="card-title">{{user.name}} - {{user.email}} - New Comment</h4>
+      <br/>
+      <input class="form-control from-control-xl" placeholder="Insert your comment" [(ngModel)]="newComment">
+      <br/>
+      <a class="btn btn-raised btn-success" (click)="submitComment()">Submit</a>
+    </div>
+  </section>
   <section *ngFor="let comment of presentation.comments" class="card">
     <div class="card-header">
       <h4 class="card-title">{{comment.physician.name}} - {{comment.physician.email}}</h4>

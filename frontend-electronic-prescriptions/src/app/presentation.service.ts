@@ -107,4 +107,27 @@ export class PresentationService {
       return comments;
     });
   }
+
+  postComment(comment: string, presentationID: number): Observable<Comment> {
+    let url = environment.receipts_frontend.url + '/api/comments';
+    let httpOptions = {
+      headers: new HttpHeaders({ 
+        'Content-Type': 'application/json',
+        'x-access-token': this.authService.getToken()
+      })
+    };
+
+    let body = {
+      "comment":comment,
+      "presentationID":presentationID
+    }
+    return this.http.post(url, body, httpOptions).map((res: Response) => {
+      let resJSON = JSON.parse(JSON.stringify(res));
+      return new Comment(
+        resJSON.comment.comment.comment,
+        new User(resJSON.comment.comment.physician, null, null, null, null)
+      );
+    });
+  }
+
 }

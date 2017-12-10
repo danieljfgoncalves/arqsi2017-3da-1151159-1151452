@@ -5,6 +5,8 @@ import { Presentation } from '../../../model/presentation';
 import { PresentationService } from '../../../presentation.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
+import { AuthService } from 'app/shared/auth/auth.service';
+import { User } from 'app/model/user';
 
 @Component({
   selector: 'app-presentation-detail',
@@ -13,16 +15,20 @@ import 'rxjs/add/observable/forkJoin';
 })
 export class PresentationDetailComponent implements OnInit {
   
+  @Input() newComment: string;
   presentation: Presentation;
+  user: User;
    
   constructor(
     private route: ActivatedRoute,
     private presentationService: PresentationService,
+    private authService: AuthService,
     private location: Location
   ) { }
 
   ngOnInit() {
     this.getPresentation();
+    this.getUserInfo();
   }
 
   getPresentation() {
@@ -37,8 +43,21 @@ export class PresentationDetailComponent implements OnInit {
     });
   }
 
+  getUserInfo() {
+    this.user = this.authService.getUserInfo();
+  }
+
   goBack(): void {
     this.location.back();
+  }
+
+  submitComment(): void {
+    if ((!this.newComment || /^\s*$/.test(this.newComment))) {
+      return;
+    }
+    
+    this.presentationService.postComment(this.newComment, this.presentation.id)
+    .subscribe(res => window.location.reload(), err => console.log(err));
   }
 
 }

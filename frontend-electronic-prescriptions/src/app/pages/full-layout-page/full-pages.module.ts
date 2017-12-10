@@ -9,12 +9,14 @@ import { ChangeLogComponent } from 'app/changelog/changelog.component';
 import { PresentationsComponent } from './presentations/presentations.component';
 import { PresentationDetailComponent } from './presentation-detail/presentation-detail.component';
 import { MedicalReceiptConsultPageComponent } from 'app/pages/full-layout-page/receipts-consult-page/receipts-consult-page.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
         CommonModule,
         FullPagesRoutingModule,
-        NgbModule
+        NgbModule,
+        FormsModule
     ],
     declarations: [       
         FullLayoutPageComponent,
