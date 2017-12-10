@@ -23,6 +23,7 @@ import { UserService } from 'app/shared/user.service';
 
 
 import * as $ from 'jquery';
+import { CheckRoleGuard } from 'app/shared/auth/check-role-guard.service';
 
 
 @NgModule({
@@ -41,6 +42,7 @@ import * as $ from 'jquery';
     providers: [
         AuthService,
         AuthGuard,
+        CheckRoleGuard,
         PatientAuthGuard,
         PharmacistAuthGuard,
         PhyscianAuthGuard,

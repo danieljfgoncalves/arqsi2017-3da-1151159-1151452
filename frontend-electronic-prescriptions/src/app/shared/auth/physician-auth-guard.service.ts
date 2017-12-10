@@ -12,3 +12,5 @@ export class PhyscianAuthGuard implements CanActivate {
         return this.authService.isAuthenticated() && this.authService.hasRole(Role.PHYSICIAN);
     }
 }
+
+// FIXME: Remove

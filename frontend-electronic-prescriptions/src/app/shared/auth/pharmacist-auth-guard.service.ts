@@ -12,3 +12,5 @@ export class PharmacistAuthGuard implements CanActivate {
         return this.authService.isAuthenticated() && this.authService.hasRole(Role.PHARMACIST);
     }
 }
+
+// FIXME: Remove

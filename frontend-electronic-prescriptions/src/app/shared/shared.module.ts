@@ -8,7 +8,6 @@ import { FooterComponent } from "./footer/footer.component";
 import { NavbarComponent } from "./navbar/navbar.component";
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { ToggleFullscreenDirective } from "./directives/toggle-fullscreen.directive";
-import { MedicalReceiptComponent } from './medical-receipts/medical-receipt.component';
 
 
 
@@ -30,8 +29,7 @@ import { MedicalReceiptComponent } from './medical-receipts/medical-receipt.comp
         FooterComponent,
         NavbarComponent,
         SidebarComponent,
-        ToggleFullscreenDirective,
-        MedicalReceiptComponent
+        ToggleFullscreenDirective
         ]
 })
 export class SharedModule { }

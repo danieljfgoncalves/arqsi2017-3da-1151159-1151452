@@ -5,6 +5,13 @@ import { FullLayoutPageComponent } from 'app/pages/full-layout-page/example/full
 import { PresentationsComponent } from 'app/pages/full-layout-page/presentations/presentations.component';
 import { ChangeLogComponent } from 'app/changelog/changelog.component';
 import { PresentationDetailComponent } from 'app/pages/full-layout-page/presentation-detail/presentation-detail.component';
+import { MedicalReceiptConsultPageComponent } from 'app/pages/full-layout-page/receipts-consult-page/receipts-consult-page.component';
+import { AuthGuard } from 'app/shared/auth/auth-guard.service';
+import { PatientAuthGuard } from 'app/shared/auth/patient-auth-guard.service';
+import { PharmacistAuthGuard } from 'app/shared/auth/pharmacist-auth-guard.service';
+import { PhyscianAuthGuard } from 'app/shared/auth/physician-auth-guard.service';
+import { Role } from 'app/model/role';
+import { CheckRoleGuard } from 'app/shared/auth/check-role-guard.service';
 
 const routes: Routes = [
   {
@@ -38,13 +45,15 @@ const routes: Routes = [
           title: 'Presentation Details Page'
         }
       },
-      // {
-      //   path: 'profile',
-      //   component: UserProfilePageComponent,
-      //   data: {
-      //     title: 'User Profile Page'
-      //   }
-      // }
+      {
+        path: 'receipts-consult',
+        component: MedicalReceiptConsultPageComponent,
+        data: {
+          title: 'Consult Receipts Page',
+          allowedRoles: [Role.PHYSICIAN, Role.PATIENT, Role.PHARMACIST]
+        },
+        canActivate: [AuthGuard, CheckRoleGuard],
+      }
     ]
   }
 ];

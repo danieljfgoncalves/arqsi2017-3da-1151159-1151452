@@ -100,6 +100,15 @@ export class AuthService {
     return this.userInfo.roles.includes(role);
   }
 
+  hasRoles(roles: Role[]) {
+    // here you can check the user's role
+    let bool = false;
+    for(let myRole of this.userInfo.roles) {
+      bool = bool || roles.includes(myRole);
+    }
+    return bool;
+  }
+
   toggleAnonymous() {
 
     if (!localStorage.getItem('anonymous')) {
