@@ -10,20 +10,24 @@ import { PresentationsComponent } from './presentations/presentations.component'
 import { PresentationDetailComponent } from './presentation-detail/presentation-detail.component';
 import { MedicalReceiptConsultPageComponent } from 'app/pages/full-layout-page/receipts-consult-page/receipts-consult-page.component';
 import { FormsModule } from '@angular/forms';
+import { MedicalReceiptCreatePageComponent } from 'app/pages/full-layout-page/receipts-create-page/receipts-create-page.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
         CommonModule,
         FullPagesRoutingModule,
         NgbModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule
     ],
     declarations: [       
         FullLayoutPageComponent,
         ChangeLogComponent,
         PresentationsComponent,
         PresentationDetailComponent,
-        MedicalReceiptConsultPageComponent
+        MedicalReceiptConsultPageComponent,
+        MedicalReceiptCreatePageComponent
     ]
 })
 export class FullPagesModule { }

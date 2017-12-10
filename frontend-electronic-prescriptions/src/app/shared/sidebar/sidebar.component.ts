@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { Subscription } from 'rxjs/Subscription';
 import { User } from 'app/model/user';
 import { AuthService } from 'app/shared/auth/auth.service';
+import { Role } from 'app/model/role';
 
 declare var $: any;
 @Component({
@@ -26,14 +27,15 @@ export class SidebarComponent implements OnInit {
     }
 
     ngOnInit() {
-        $.getScript('./assets/js/app-sidebar.js');
-        this.menuItems = ROUTES.filter(menuItem => menuItem);
 
         this.userInfo = this.authService.getUserInfo();
         this.subscriptionAuth = this.authService.auth.subscribe((userInfo) => {
             this.userInfo = userInfo;
-            this.cdr.detectChanges();
         });
+
+        $.getScript('./assets/js/app-sidebar.js');
+        this.menuItems = ROUTES.filter(menuItem => menuItem);
+
     }
 
     ngOnDestroy() {

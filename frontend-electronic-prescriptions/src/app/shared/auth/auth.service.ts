@@ -102,6 +102,8 @@ export class AuthService {
 
   hasRoles(roles: Role[]) {
     // here you can check the user's role
+    if (!this.userInfo) return false;
+
     let bool = false;
     for(let myRole of this.userInfo.roles) {
       bool = bool || roles.includes(myRole);

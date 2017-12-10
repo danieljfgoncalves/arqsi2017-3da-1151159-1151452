@@ -14,6 +14,8 @@ import { Posology } from 'app/model/posology';
 import { forEach } from '@angular/router/src/utils/collection';
 import { Fill } from 'app/model/fill';
 import { User } from 'app/model/user';
+import { Drug } from 'app/model/drug';
+import { Medicine } from 'app/model/medicine';
 
 @Injectable()
 export class MedicalReceiptService {
@@ -57,6 +59,7 @@ export class MedicalReceiptService {
       );
       // Posology
       let posology: Posology = new Posology(
+        prescriptionJSON.prescribedPosology.posologyId,
         prescriptionJSON.prescribedPosology.quantity,
         prescriptionJSON.prescribedPosology.technique,
         prescriptionJSON.prescribedPosology.interval,
@@ -113,5 +116,79 @@ export class MedicalReceiptService {
         }
         return receipts;
       });
+  }
+
+  getDrugs(): Observable<Drug[]> {
+
+    const url = environment.medicines_backend.url + '/api/Drugs'
+
+    return this.http.get<Drug[]>(url).map(res => {
+        // Parse res to JSON
+        let json = JSON.parse(JSON.stringify(res));
+
+        let drugs: Drug[] = new Array();
+        for (let drug of json) {
+
+          let newDrug: Drug = {
+            id: drug.drugId,
+            name: drug.name
+          }
+          drugs.push(newDrug);
+        }
+        return drugs;
+      });
+  }
+
+  getMedicines(): Observable<Medicine[]> {
+
+    const url = environment.medicines_backend.url + '/api/Medicines'
+
+    return this.http.get<Medicine[]>(url).map(res => {
+      // Parse res to JSON
+      let json = JSON.parse(JSON.stringify(res));
+
+      let medicines: Medicine[] = new Array();
+      for (let medicine of json) {
+
+        let newMed: Medicine = {
+          id: medicine.medicineId,
+          name: medicine.name
+        }
+        medicines.push(newMed);
+      }
+      return medicines;
+    });
+  }
+
+  getPosologies(): Observable<Posology[]> {
+
+    const url = environment.medicines_backend.url + '/api/Posologies'
+
+    return this.http.get<Posology[]>(url).map(res => {
+      // Parse res to JSON
+      let json = JSON.parse(JSON.stringify(res));
+
+      let posologies: Posology[] = new Array();
+      for (let posology of json) {
+
+        let newPosology: Posology = {
+          id: posology.posologyId,
+          quantity: posology.quantity,
+          technique: posology.technique,
+          interval: posology.interval,
+          period: posology.period
+        }
+        posologies.push(newPosology);
+      }
+      return posologies;
+    });
+  }
+
+  postReceipt(body) : Observable<boolean> {
+
+    const url = this.baseUrl + '/api/medicalReceipts'
+
+    return this.http.post<boolean>(url, body,
+      this.getHeaders());
   }
 }

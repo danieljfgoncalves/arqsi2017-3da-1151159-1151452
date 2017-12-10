@@ -58,6 +58,7 @@ export class PresentationService {
     let posologies: Posology[] = new Array();
     for(let i=0; i< presentationJSON.medicines.length; i++) {
       let posology: Posology = new Posology(
+        presentationJSON.posologies[i].posologyId,
         presentationJSON.posologies[i].quantity,
         presentationJSON.posologies[i].technique,
         presentationJSON.posologies[i].interval,
