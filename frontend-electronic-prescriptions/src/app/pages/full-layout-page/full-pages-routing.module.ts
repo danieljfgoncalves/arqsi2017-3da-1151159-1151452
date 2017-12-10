@@ -12,6 +12,7 @@ import { PharmacistAuthGuard } from 'app/shared/auth/pharmacist-auth-guard.servi
 import { PhyscianAuthGuard } from 'app/shared/auth/physician-auth-guard.service';
 import { Role } from 'app/model/role';
 import { CheckRoleGuard } from 'app/shared/auth/check-role-guard.service';
+import { FillsComponent } from 'app/shared/fills/fills.component';
 import { MedicalReceiptCreatePageComponent } from 'app/pages/full-layout-page/receipts-create-page/receipts-create-page.component';
 import { MedicalReceiptUpdatePageComponent } from 'app/pages/full-layout-page/receipts-update-page/receipts-update-page.component';
 
@@ -55,6 +56,13 @@ const routes: Routes = [
           allowedRoles: [Role.PHYSICIAN, Role.PATIENT]
         },
         canActivate: [AuthGuard, CheckRoleGuard],
+      },
+      {
+        path: 'fills',
+        component: FillsComponent,
+        data: {
+          title: 'Presentation Details Page'
+        }
       },
       {
         path: 'receipts-create',
