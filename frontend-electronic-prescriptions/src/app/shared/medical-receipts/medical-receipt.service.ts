@@ -13,6 +13,7 @@ import { Comment } from '../../model/comment';
 import { Posology } from 'app/model/posology';
 import { forEach } from '@angular/router/src/utils/collection';
 import { Fill } from 'app/model/fill';
+import { User } from 'app/model/user';
 
 @Injectable()
 export class MedicalReceiptService {
@@ -72,16 +73,27 @@ export class MedicalReceiptService {
       prescriptions.push(prescription);
     }
 
-    // let patient = new User(
+    let patient: User = {
+      id: json.patient.userID,
+      name: json.patient.name,
+      email: json.patient.email,
+      mobile: json.patient.mobile,
+      roles: json.patient.roles
+    };
 
-    // );
+    let physician: User = {
+      id: json.physician.userID,
+      name: json.physician.name,
+      email: json.physician.email,
+      mobile: json.physician.mobile,
+      roles: json.physician.roles
+    };
 
-    // FIXME: Add Users injection
     return new MedicalReceipt(
       prescriptions,
       new Date(json.creationDate),
-      null,
-      null
+      physician,
+      patient
     );
   }
 

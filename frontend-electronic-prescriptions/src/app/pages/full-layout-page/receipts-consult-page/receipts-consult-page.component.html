@@ -11,13 +11,13 @@
           <span class="font-weight-bold">
             Patient: 
           </span>
-          {{receipt.patient}}
+          {{receipt.patient.name}}
         </h3>
         <h6>
           <span class="font-weight-bold my-2">
             Physician:
           </span>
-          {{receipt.physician}}
+          {{receipt.physician.name}}
         </h6>
         <h6 class="my-2">
           <span class="font-weight-bold">
@@ -129,6 +129,7 @@
               </ngb-accordion>
               <!-- End Accordian -->
             </div>
+            <hr>
           </div>
         </div>
       </div>
