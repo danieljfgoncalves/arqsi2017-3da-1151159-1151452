@@ -67,7 +67,7 @@ export class PresentationService {
     }
     
     return new Presentation(
-      presentationJSON.drug.name, medicines, posologies, 
+      presentationJSON.presentationId, presentationJSON.drug.name, medicines, posologies, 
       presentationJSON.form, presentationJSON.concentration, presentationJSON.quantity, null);
   }
 

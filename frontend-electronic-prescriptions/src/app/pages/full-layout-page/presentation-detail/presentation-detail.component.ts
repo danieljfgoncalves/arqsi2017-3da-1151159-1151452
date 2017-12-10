@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 import { Presentation } from '../../../model/presentation';
 import { PresentationService } from '../../../presentation.service';
 import { Observable } from 'rxjs/Observable';
@@ -16,7 +17,8 @@ export class PresentationDetailComponent implements OnInit {
    
   constructor(
     private route: ActivatedRoute,
-    private presentationService: PresentationService
+    private presentationService: PresentationService,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -33,6 +35,10 @@ export class PresentationDetailComponent implements OnInit {
       this.presentation = data[0];
       this.presentation.comments = data[1];
     });
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
 }

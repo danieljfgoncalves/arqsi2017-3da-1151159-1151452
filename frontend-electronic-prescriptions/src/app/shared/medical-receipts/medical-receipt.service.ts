@@ -46,6 +46,7 @@ export class MedicalReceiptService {
       }
       // presentation
       let presentation: Presentation = new Presentation(
+        null,
         prescriptionJSON.drug,
         null,
         null,

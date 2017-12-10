@@ -2,6 +2,7 @@ import { Comment } from './comment'
 import { Posology } from './posology'
 
 export class Presentation {
+    id: number;
     drug: string;
     medicines: string[];
     posologies: Posology[];
@@ -11,6 +12,7 @@ export class Presentation {
     comments: Comment[];
 
     constructor(
+        id: number,
         drug: string,
         medicines: string[],
         posologies: Posology[],
@@ -19,6 +21,7 @@ export class Presentation {
         quantity: string,
         comments: Comment[]
     ) {
+        this.id = id;
         this.drug = drug;
         this.medicines = medicines;
         this.posologies = posologies;
