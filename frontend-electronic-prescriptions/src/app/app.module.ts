@@ -19,6 +19,7 @@ import { PharmacistAuthGuard } from './shared/auth/pharmacist-auth-guard.service
 import { PatientAuthGuard } from './shared/auth/patient-auth-guard.service';
 import { PresentationService } from './presentation.service';
 import { MedicalReceiptService } from './shared/medical-receipts/medical-receipt.service'
+import { UserService } from 'app/shared/user.service';
 
 
 import * as $ from 'jquery';
@@ -44,7 +45,8 @@ import * as $ from 'jquery';
         PharmacistAuthGuard,
         PhyscianAuthGuard,
         PresentationService,
-        MedicalReceiptService
+        MedicalReceiptService,
+        UserService
     ],
     bootstrap: [AppComponent]
 })

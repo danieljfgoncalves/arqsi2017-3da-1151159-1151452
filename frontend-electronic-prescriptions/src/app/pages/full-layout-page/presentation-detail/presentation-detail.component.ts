@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Presentation } from '../../../model/presentation';
 import { PresentationService } from '../../../presentation.service';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 
 @Component({
   selector: 'app-presentation-detail',
@@ -21,10 +23,16 @@ export class PresentationDetailComponent implements OnInit {
     this.getPresentation();
   }
 
-  getPresentation(): void {
+  getPresentation() {
     const id = +this.route.snapshot.paramMap.get('id');
-    this.presentationService.getPresentation(id)
-    .subscribe(presentation => this.presentation = presentation);
+
+    Observable.forkJoin(
+      this.presentationService.getPresentation(id),
+      this.presentationService.getComments(id)
+    ).subscribe(data => {
+      this.presentation = data[0];
+      this.presentation.comments = data[1];
+    });
   }
 
 }

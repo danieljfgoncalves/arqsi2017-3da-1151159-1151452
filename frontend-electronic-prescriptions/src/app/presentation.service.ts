@@ -10,13 +10,19 @@ import { Presentation } from './model/presentation';
 import { Comment } from './model/comment';
 import { Posology } from 'app/model/posology';
 import { AuthService } from 'app/shared/auth/auth.service';
+import { User } from 'app/model/user';
+import { UserService } from 'app/shared/user.service';
+import { OuterSubscriber } from 'rxjs/OuterSubscriber';
+import { Promise } from 'q';
+import { Role } from 'app/model/role';
 
 @Injectable()
 export class PresentationService {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService
   ) { }
 
   getPresentations(): Observable<Presentation[]> {
@@ -25,10 +31,8 @@ export class PresentationService {
       let presentations: Presentation[] = new Array();
 
       let presentationsJSON = JSON.parse(JSON.stringify(res));
-      console.log(presentationsJSON);
       for(var i = 0; i < presentationsJSON.length; i++) {
         presentations[i] = this.mapPresentation(presentationsJSON[i]);
-        console.log(presentations[i]);
       }
 
       return presentations;
@@ -47,12 +51,12 @@ export class PresentationService {
   mapPresentation(presentationJSON): Presentation {
 
     let medicines: string[] = new Array();
-    for(var i=0; i< presentationJSON.medicines.length; i++) {
+    for(let i=0; i< presentationJSON.medicines.length; i++) {
       medicines[i] = presentationJSON.medicines[i].name;
     }
 
     let posologies: Posology[] = new Array();
-    for(var i=0; i< presentationJSON.medicines.length; i++) {
+    for(let i=0; i< presentationJSON.medicines.length; i++) {
       let posology: Posology = new Posology(
         presentationJSON.posologies[i].quantity,
         presentationJSON.posologies[i].technique,
@@ -61,49 +65,46 @@ export class PresentationService {
       );
       posologies[i] = posology;
     }
-
-    //let comments: Comment[];
-    //this.getComments(presentationJSON.presentationId).subscribe(c => comments = c);
-
+    
     return new Presentation(
       presentationJSON.drug.name, medicines, posologies, 
       presentationJSON.form, presentationJSON.concentration, presentationJSON.quantity, null);
   }
 
   getComments(presentationID: number): Observable<Comment[]> {
-
-    let url = environment.receipts_frontend.url + '/api/comments/' + `${presentationID}`;
-    console.log(url);
-    let token = this.authService.getToken();
-    console.log(token);
+    let url = environment.receipts_frontend.url + '/api/comments/presentation/' + `${presentationID}`;
     let httpOptions = {
       headers: new HttpHeaders({ 
         'Content-Type': 'application/json',
-        'x-access-token': token
+        'x-access-token': this.authService.getToken()
       })
     };
-    console.log(httpOptions);
 
     return this.http.get(url, httpOptions).map((res: Response) => {
-
       let comments: Comment[] = new Array();
 
       let commentsJSON = JSON.parse(JSON.stringify(res));
-      console.log("COMMENTSJSON: ");
-      console.log(commentsJSON);
-
-      for(var i=0; i< commentsJSON; i++) {
-        comments[i] = new Comment(
-          commentsJSON.comment,
-          commentsJSON.physician
+      for(let i = 0; i < commentsJSON.length; i++) {
+        
+        let roles : Role[] = new Array();
+        for(let j = 0; j < commentsJSON[i].physician.roles.length; j++) {
+          roles[j] = commentsJSON[i].physician.roles[j];
+        }
+        let physician: User = new User(
+          commentsJSON[i].physician.userID,
+          commentsJSON[i].physician.name,
+          commentsJSON[i].physician.email,
+          commentsJSON[i].physician.mobile,
+          roles
         );
-        console.log("COMMENTS[i]: ");
-        console.log(comments[i]);
+
+        comments[i] = new Comment(
+          commentsJSON[i].comment,
+          commentsJSON[i].physician
+        );
       }
 
       return comments;
     });
-
   }
-
 }
