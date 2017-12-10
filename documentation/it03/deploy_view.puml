@@ -1,0 +1,49 @@
+@startuml "deploy_view_it2"
+
+' Components
+
+node "3rd Iteration" #43CC72 {
+
+    cloud "az: Azure Cloud Server 3\n" as az3 #white {
+        folder "SPA Angular" {
+            [ElectronicPrescriptionFrontend]
+        }
+    }
+}
+
+node "1st Iteration" #009FBD {
+  
+    cloud "az: Azure Cloud Server 1\n" as az1 #white {
+        database "SQL Database" #DCDCDC {
+            [MedicinesDB]
+        }
+        folder "ASP.NET Service" {
+            [MedicinesBackend]
+        }
+    }
+}
+
+node "2nd Iteration" #43CC72 {
+
+    cloud "az: Azure Cloud Server 2\n" as az2 #white {
+        folder "node.js Service" {
+            [ReceiptsFrontend]
+        }
+    }
+
+    cloud "aws: AWS Cloud Server\n" as aws #white {
+        database "MongoDB" #DCDCDC {
+            [ReceiptsDB]
+        }
+    }
+}
+
+' Relations
+[ElectronicPrescriptionFrontend] .. [ReceiptsFrontend]
+[ElectronicPrescriptionFrontend] .. [MedicinesBackend]
+
+[ReceiptsFrontend] . [MedicinesBackend]
+
+[MedicinesDB] . [MedicinesBackend]
+[ReceiptsDB] . [ReceiptsFrontend]: <back:#FFFFE0>connection</back>\n <img mlab-logo.png>
+@enduml

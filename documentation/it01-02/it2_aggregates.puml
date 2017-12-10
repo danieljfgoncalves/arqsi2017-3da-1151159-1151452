@@ -2,21 +2,6 @@
 
 @startuml "dm_it2_global"
 
-    package "Aggregate [Drug]" <<rectangle>> #009FBD {
-
-        class Drug <<Aggregate Root>>
-        class Medicine <<Value Object>>
-        class Presentation <<Entity>>
-        class Posology <<Entity>>
-        class PackageLeaflet <<Entity>>
-
-        ' Relations
-        Drug "1" *-- "*" Medicine
-        Drug "1" *-- "*" Presentation
-        Presentation "1" *-- "*" PackageLeaflet
-        PackageLeaflet "*" o- "1" Posology
-    }
-
     package "Aggregate [MedicalReceipt]" <<rectangle>> #43CC72 {
 
         class MedicalReceipt <<Aggregate Root>>
@@ -26,12 +11,8 @@
 
         ' Relations
         MedicalReceipt "1" *-- "1,*" Prescription
-        Prescription "*" o- "1" Drug
-        Prescription "*" o- "0,1" Medicine
-        Prescription "*" o--- "1" Presentation
         Prescription "1" *-- "*" PrescribedPosology
         Prescription "1" *- "*" Fill
-        PrescribedPosology "0,1" o-- "0,1" Posology
     }
 
     package "Aggregate [User]" <<rectangle>> #fbb034 {
