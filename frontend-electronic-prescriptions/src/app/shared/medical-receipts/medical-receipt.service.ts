@@ -94,6 +94,7 @@ export class MedicalReceiptService {
     };
 
     return new MedicalReceipt(
+      json._id,
       prescriptions,
       new Date(json.creationDate),
       physician,
@@ -189,6 +190,14 @@ export class MedicalReceiptService {
     const url = this.baseUrl + '/api/medicalReceipts'
 
     return this.http.post<boolean>(url, body,
+      this.getHeaders());
+  }
+
+  putReceipt(body, id): Observable<boolean> {
+
+    const url = this.baseUrl + '/api/medicalReceipts/' + id
+
+    return this.http.put<boolean>(url, body,
       this.getHeaders());
   }
 }

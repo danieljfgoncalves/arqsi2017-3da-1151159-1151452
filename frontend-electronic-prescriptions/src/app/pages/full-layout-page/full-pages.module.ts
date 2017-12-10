@@ -12,6 +12,7 @@ import { MedicalReceiptConsultPageComponent } from 'app/pages/full-layout-page/r
 import { FormsModule } from '@angular/forms';
 import { MedicalReceiptCreatePageComponent } from 'app/pages/full-layout-page/receipts-create-page/receipts-create-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MedicalReceiptUpdatePageComponent } from 'app/pages/full-layout-page/receipts-update-page/receipts-update-page.component';
 
 @NgModule({
     imports: [
@@ -27,7 +28,8 @@ import { ReactiveFormsModule } from '@angular/forms';
         PresentationsComponent,
         PresentationDetailComponent,
         MedicalReceiptConsultPageComponent,
-        MedicalReceiptCreatePageComponent
+        MedicalReceiptCreatePageComponent,
+        MedicalReceiptUpdatePageComponent
     ]
 })
 export class FullPagesModule { }

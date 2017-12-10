@@ -11,14 +11,13 @@ export const ROUTES: RouteInfo[] = [
         submenu: [
             { path: '/main/receipts-consult', title: 'Consult', icon: 'ft-search', class: '', badge: '', badgeClass: '', isExternalLink: false, allowedRoles: [Role.PATIENT, Role.PHYSICIAN], submenu: [] },
             { path: '/main/receipts-create', title: 'Create', icon: 'ft-file-plus', class: '', badge: '', badgeClass: '', isExternalLink: false, allowedRoles: [Role.PHYSICIAN], submenu: [] },
-            { path: 'javascript:;', title: 'Edit', icon: 'ft-edit', class: '', badge: '', badgeClass: '', isExternalLink: false, allowedRoles: [], submenu: [] },
+            { path: '/main/receipts-update', title: 'Edit', icon: 'ft-edit', class: '', badge: '', badgeClass: '', isExternalLink: false, allowedRoles: [Role.PHYSICIAN], submenu: [] },
             { path: 'javascript:;', title: 'Fill', icon: 'ft-check-square', class: '', badge: '', badgeClass: '', isExternalLink: false, allowedRoles: [], submenu: [] }
         ]
     },
     {
         path: '', title: 'Medicines', icon: 'fa fa-medkit', class: 'has-sub', badge: '', badgeClass: '', isExternalLink: false, allowedRoles: [],
         submenu: [
-            { path: 'javascript:;', title: 'Posologies', icon: 'ft-search', class: '', badge: '', badgeClass: '', isExternalLink: false, allowedRoles: [], submenu: [] },
             { path: '/main/presentations', title: 'Presentations', icon: 'ft-search', class: '', badge: '', badgeClass: '', isExternalLink: false, allowedRoles: [], submenu: [] }
         ]
     }

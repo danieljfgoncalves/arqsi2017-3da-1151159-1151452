@@ -13,6 +13,7 @@ import { PhyscianAuthGuard } from 'app/shared/auth/physician-auth-guard.service'
 import { Role } from 'app/model/role';
 import { CheckRoleGuard } from 'app/shared/auth/check-role-guard.service';
 import { MedicalReceiptCreatePageComponent } from 'app/pages/full-layout-page/receipts-create-page/receipts-create-page.component';
+import { MedicalReceiptUpdatePageComponent } from 'app/pages/full-layout-page/receipts-update-page/receipts-update-page.component';
 
 const routes: Routes = [
   {
@@ -51,7 +52,7 @@ const routes: Routes = [
         component: MedicalReceiptConsultPageComponent,
         data: {
           title: 'Consult Receipts Page',
-          allowedRoles: [Role.PHYSICIAN, Role.PATIENT, Role.PHARMACIST]
+          allowedRoles: [Role.PHYSICIAN, Role.PATIENT]
         },
         canActivate: [AuthGuard, CheckRoleGuard],
       },
@@ -60,6 +61,15 @@ const routes: Routes = [
         component: MedicalReceiptCreatePageComponent,
         data: {
           title: 'Create Receipt Page',
+          allowedRoles: [Role.PHYSICIAN]
+        },
+        canActivate: [AuthGuard, CheckRoleGuard],
+      },
+      {
+        path: 'receipts-update',
+        component: MedicalReceiptUpdatePageComponent,
+        data: {
+          title: 'Update Receipt Page',
           allowedRoles: [Role.PHYSICIAN]
         },
         canActivate: [AuthGuard, CheckRoleGuard],
