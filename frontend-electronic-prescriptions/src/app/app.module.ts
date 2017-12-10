@@ -24,6 +24,7 @@ import { UserService } from 'app/shared/user.service';
 
 import * as $ from 'jquery';
 import { CheckRoleGuard } from 'app/shared/auth/check-role-guard.service';
+import { PrescriptionService } from 'app/shared/prescription.service';
 
 
 @NgModule({
@@ -48,7 +49,8 @@ import { CheckRoleGuard } from 'app/shared/auth/check-role-guard.service';
         PhyscianAuthGuard,
         PresentationService,
         MedicalReceiptService,
-        UserService
+        UserService,
+        PrescriptionService
     ],
     bootstrap: [AppComponent]
 })

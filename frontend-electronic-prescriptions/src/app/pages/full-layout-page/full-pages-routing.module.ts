@@ -12,6 +12,7 @@ import { PharmacistAuthGuard } from 'app/shared/auth/pharmacist-auth-guard.servi
 import { PhyscianAuthGuard } from 'app/shared/auth/physician-auth-guard.service';
 import { Role } from 'app/model/role';
 import { CheckRoleGuard } from 'app/shared/auth/check-role-guard.service';
+import { FillsComponent } from 'app/shared/fills/fills.component';
 
 const routes: Routes = [
   {
@@ -53,6 +54,13 @@ const routes: Routes = [
           allowedRoles: [Role.PHYSICIAN, Role.PATIENT, Role.PHARMACIST]
         },
         canActivate: [AuthGuard, CheckRoleGuard],
+      },
+      {
+        path: 'fills',
+        component: FillsComponent,
+        data: {
+          title: 'Presentation Details Page'
+        }
       }
     ]
   }
