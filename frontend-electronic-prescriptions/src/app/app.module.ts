@@ -22,6 +22,7 @@ import { MedicalReceiptService } from './shared/medical-receipts/medical-receipt
 
 
 import * as $ from 'jquery';
+import { CheckRoleGuard } from 'app/shared/auth/check-role-guard.service';
 
 
 @NgModule({
@@ -40,6 +41,7 @@ import * as $ from 'jquery';
     providers: [
         AuthService,
         AuthGuard,
+        CheckRoleGuard,
         PatientAuthGuard,
         PharmacistAuthGuard,
         PhyscianAuthGuard,

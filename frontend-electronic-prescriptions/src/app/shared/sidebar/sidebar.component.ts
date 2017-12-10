@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ROUTES } from './sidebar-routes.config';
 import { RouteInfo } from "./sidebar.metadata";
 import { Router, ActivatedRoute } from "@angular/router";
+import { Subscription } from 'rxjs/Subscription';
+import { User } from 'app/model/user';
+import { AuthService } from 'app/shared/auth/auth.service';
 
 declare var $: any;
 @Component({
@@ -13,13 +16,27 @@ declare var $: any;
 export class SidebarComponent implements OnInit {
     public menuItems: any[];
 
+    subscriptionAuth: Subscription;
+    userInfo: User;
+
     constructor(private router: Router,
-        private route: ActivatedRoute) {
+        private route: ActivatedRoute,
+        private authService: AuthService,
+        public cdr: ChangeDetectorRef) {
     }
 
     ngOnInit() {
         $.getScript('./assets/js/app-sidebar.js');
         this.menuItems = ROUTES.filter(menuItem => menuItem);
+
+        this.userInfo = this.authService.getUserInfo();
+        this.subscriptionAuth = this.authService.auth.subscribe((userInfo) => {
+            this.userInfo = userInfo;
+            this.cdr.detectChanges();
+        });
     }
 
+    ngOnDestroy() {
+        this.subscriptionAuth.unsubscribe();
+    }
 }

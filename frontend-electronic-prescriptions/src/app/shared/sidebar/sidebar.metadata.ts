@@ -1,3 +1,5 @@
+import { Role } from "app/model/role";
+
 export interface RouteInfo {
     path: string;
     title: string;
@@ -6,5 +8,6 @@ export interface RouteInfo {
     badge: string;
     badgeClass: string;
     isExternalLink: boolean;
+    //allowedRoles: Role[];
     submenu : RouteInfo[];
 }
