@@ -20,11 +20,57 @@ exports.get_medical_receipts_list = function (req, res) {
 
     if (req.roles.includes(roles.Role.ADMIN)) {
 
-        MedicalReceipt.find(function (err, medicalReceipts) {
+        MedicalReceipt.find(function (err1, medicalReceipts) {
             if (err) {
                 res.status(500).send(err);
             }
-            res.status(200).json(medicalReceipts);
+            var mrs = [];
+            var patientDTO, physicianDTO;
+            async.each(medicalReceipts, (medicalReceipt, callback) => {
+
+                new Promise( (resolve, reject) => {
+                    User.findById(medicalReceipt.patient, (err, user) => {
+                        var data = {};
+                        data.patientDTO = {
+                            roles: user.roles,
+                            userID: user._id,
+                            name: user.name,
+                            email: user.email,
+                            mobile: user.mobile
+                        };
+                        resolve(data);
+                    });
+                }).then(data => {
+                    return new Promise( (resolve, reject) => {
+                        User.findById(medicalReceipt.physician, (err, user) => {
+                            data.physicianDTO = {
+                                roles: user.roles,
+                                userID: user._id,
+                                name: user.name,
+                                email: user.email,
+                                mobile: user.mobile
+                            };
+                            resolve(data);
+                        });
+                    });
+                }).then(data => {
+                    var medicalReceiptDTO = {
+                        "_id": medicalReceipt._id,
+                        "patient": data.patientDTO,
+                        "physician": data.physicianDTO,
+                        "prescriptions": medicalReceipt.prescriptions,
+                        "creationDate":  medicalReceipt.creationDate
+                    };
+                    mrs.push(medicalReceiptDTO);
+                    callback();
+                });
+
+            }, err2 => {
+                if (err2) {
+                    res.status(500).send(err2);
+                }
+                res.status(200).json(mrs);
+            })
         });
     } else if (req.roles.includes(roles.Role.PHYSICIAN) ||
         req.roles.includes(roles.Role.PATIENT)) {
@@ -39,11 +85,58 @@ exports.get_medical_receipts_list = function (req, res) {
                 "patient": req.userID
             }
         }
+
         MedicalReceipt.find(query, function (err, medicalReceipts) {
             if (err) {
                 res.status(500).send(err);
             }
-            res.status(200).json(medicalReceipts);
+            var mrs = [];
+            var patientDTO, physicianDTO;
+            async.each(medicalReceipts, (medicalReceipt, callback) => {
+
+                new Promise( (resolve, reject) => {
+                    User.findById(medicalReceipt.patient, (err, user) => {
+                        var data = {};
+                        data.patientDTO = {
+                            roles: user.roles,
+                            userID: user._id,
+                            name: user.name,
+                            email: user.email,
+                            mobile: user.mobile
+                        };
+                        resolve(data);
+                    });
+                }).then(data => {
+                    return new Promise( (resolve, reject) => {
+                        User.findById(medicalReceipt.physician, (err, user) => {
+                            data.physicianDTO = {
+                                roles: user.roles,
+                                userID: user._id,
+                                name: user.name,
+                                email: user.email,
+                                mobile: user.mobile
+                            };
+                            resolve(data);
+                        });
+                    });
+                }).then(data => {
+                    var medicalReceiptDTO = {
+                        "_id": medicalReceipt._id,
+                        "patient": data.patientDTO,
+                        "physician": data.physicianDTO,
+                        "prescriptions": medicalReceipt.prescriptions,
+                        "creationDate":  medicalReceipt.creationDate
+                    };
+                    mrs.push(medicalReceiptDTO);
+                    callback();
+                });
+
+            }, err2 => {
+                if (err2) {
+                    res.status(500).send(err2);
+                }
+                res.status(200).json(mrs);
+            })
         });
     } else {
         res.status(401).send('Unauthorized User.');

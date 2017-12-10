@@ -2,6 +2,7 @@
 
 var roles = require('../models/roles');
 var MedicalReceipt = require('../models/medicalReceipt');
+var User = require('../models/user');
 
 // GET /api/Patient/{id}/Prescriptions/tofill/{?data} 
 exports.get_prescriptions_to_fill_until_date = (req, res) => {
@@ -62,5 +63,27 @@ exports.get_prescriptions_to_fill_until_date = (req, res) => {
             return;
         }
         res.status(200).json(prescriptions);
+    });
+};
+
+exports.get_patients = (req, res) => {
+    User.find((err, users) => {
+        if (err) {
+            res.status(500).send(err);
+        }
+        var usersDTO = [];
+        users.forEach(user => user.roles.forEach(role => {
+            if (role === roles.Role.PATIENT) {
+                userDTO = {
+                    roles: user.roles,
+                    userID: user._id,
+                    name: user.name,
+                    email: user.email,
+                    mobile: user.mobile
+                }
+                usersDTO.push(userDTO);
+            }
+        }));
+        res.status(200).json(usersDTO);
     });
 };
