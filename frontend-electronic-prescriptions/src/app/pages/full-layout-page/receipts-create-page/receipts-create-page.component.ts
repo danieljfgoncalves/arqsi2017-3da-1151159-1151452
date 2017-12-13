@@ -1,4 +1,6 @@
 import { Component, OnInit, OnChanges, Input, EventEmitter, NgModule } from '@angular/core';
+// import * as alertFunctions from '../../../shared/data/sweet-alerts';
+import swal from 'sweetalert2';
 
 // Forms
 import {
@@ -100,6 +102,7 @@ export class MedicalReceiptCreatePageComponent implements OnInit {
       this.receiptService.postReceipt(newReceipt).subscribe(
         res => {
           console.log(res);
+          swal("Medical Receipts succesfully created!");
         },
         err => {
           console.log("Error occured");

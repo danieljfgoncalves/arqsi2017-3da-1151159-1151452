@@ -20,7 +20,8 @@
       "prefix": "app",
       "styles": [
         "assets/sass/app.scss",
-        "styles.css"
+        "styles.css",
+        "../node_modules/sweetalert2/dist/sweetalert2.min.css"
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",

@@ -4,7 +4,7 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false,
+  production: true,
   medicines_backend: {
     url: "http://arqsi2017-medicines-backend-api.azurewebsites.net"
   },

@@ -1,4 +1,5 @@
 import { Component, OnInit, OnChanges, Input, EventEmitter, NgModule } from '@angular/core';
+import swal from 'sweetalert2';
 
 // Forms
 import {
@@ -110,6 +111,7 @@ export class MedicalReceiptUpdatePageComponent implements OnInit {
       this.receiptService.putReceipt(newReceipt, this.receipt.id).subscribe(
         res => {
           console.log(res);
+          swal("Medical Receipts succesfully updated!");
         },
         err => {
           console.log("Error occured");

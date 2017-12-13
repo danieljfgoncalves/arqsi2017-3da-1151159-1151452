@@ -169,7 +169,7 @@
                 <button *ngIf="!receipt" type="button" class="btn btn-raised btn-primary" (click)="onReceiptSelection()" style="margin-left: 1rem;">
                   <i class="fa fa-check-square-o"></i> Select
                 </button>
-                <button *ngIf="receipt" type="button" class="btn btn-raised btn-primary" (click)="onSubmit()" [disabled]="!receiptForm.valid" style="margin-left: 1rem;">
+                <button *ngIf="receipt" type="button" class="btn btn-raised btn-primary" id="basic-alert" (click)="onSubmit()" [disabled]="!receiptForm.valid" style="margin-left: 1rem;">
                   <i class="fa fa-check-square-o"></i> Create
                 </button>
               </div>

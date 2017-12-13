@@ -15,6 +15,7 @@ import { MedicalReceiptCreatePageComponent } from 'app/pages/full-layout-page/re
 import { ReactiveFormsModule } from '@angular/forms';
 import { MedicalReceiptUpdatePageComponent } from 'app/pages/full-layout-page/receipts-update-page/receipts-update-page.component';
 
+
 @NgModule({
     imports: [
         CommonModule,
