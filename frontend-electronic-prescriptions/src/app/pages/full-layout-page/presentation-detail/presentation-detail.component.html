@@ -23,7 +23,7 @@
   </table>
 
   <h2>Comments</h2>
-  <section class="card">
+  <section *ngIf="user.roles.includes(physicianRole)" class="card">
     <div class="card-header">
       <h4 class="card-title">{{user.name}} - {{user.email}} - New Comment</h4>
       <br/>

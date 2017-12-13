@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import { AuthService } from 'app/shared/auth/auth.service';
 import { User } from 'app/model/user';
+import { Role } from 'app/model/role';
 
 @Component({
   selector: 'app-presentation-detail',
@@ -18,6 +19,7 @@ export class PresentationDetailComponent implements OnInit {
   @Input() newComment: string;
   presentation: Presentation;
   user: User;
+  physicianRole:string = "physician";
    
   constructor(
     private route: ActivatedRoute,
@@ -45,6 +47,7 @@ export class PresentationDetailComponent implements OnInit {
 
   getUserInfo() {
     this.user = this.authService.getUserInfo();
+    console.debug(this.user);
   }
 
   goBack(): void {
