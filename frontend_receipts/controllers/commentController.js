@@ -191,8 +191,9 @@ exports.delete_comment = (req, res) => {
 
 // GET /api/comments/presentation/{id}
 exports.get_comments_of_presentation = (req, res) => {
-    if ( !( req.roles.includes(roles.Role.ADMIN) || 
-            req.roles.includes(roles.Role.PHYSICIAN) ) ) {
+    if (!(req.roles.includes(roles.Role.ADMIN) ||
+        req.roles.includes(roles.Role.PHYSICIAN) ||
+        req.roles.includes(roles.Role.PHARMACIST))) {
         res.status(401).json({"Message":"Unauthorized User."});
         return;
     }
