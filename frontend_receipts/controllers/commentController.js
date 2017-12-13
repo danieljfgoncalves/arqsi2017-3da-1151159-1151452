@@ -58,8 +58,9 @@ exports.get_comments = (req, res) => {
 
 // GET /api/comments/{id}
 exports.get_comment = (req, res) => {
-    if ( !( req.roles.includes(roles.Role.ADMIN) || 
-            req.roles.includes(roles.Role.PHYSICIAN) ) ) {
+    if (!(req.roles.includes(roles.Role.ADMIN) ||
+        req.roles.includes(roles.Role.PHYSICIAN) ||
+        req.roles.includes(roles.Role.PHARMACIST))) {
         res.status(401).json({"Message":"Unauthorized User."});
         return;
     }
