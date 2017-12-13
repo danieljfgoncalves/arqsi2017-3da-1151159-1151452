@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { ContentLayoutPageComponent } from './example/content-layout-page.component'; // FIXME: Remove all content layout page
 import { LoginPageComponent } from './login/login-page.component';
+import { RegisterPageComponent } from 'app/pages/content-layout-page/register/register-page.component';
 
 
 const routes: Routes = [
@@ -23,6 +24,13 @@ const routes: Routes = [
           title: 'Example Page'
         }
       },
+      {
+        path: 'register',
+        component: RegisterPageComponent,
+        data: {
+          title: 'Register Page'
+        }
+      },
       // { // FIXME:
       //   path: 'error',
       //   component: ErrorPageComponent,
@@ -30,13 +38,6 @@ const routes: Routes = [
       //     title: 'Error Page'
       //   }
       // },
-      // {
-      //   path: 'register',
-      //   component: RegisterPageComponent,
-      //   data: {
-      //     title: 'Register Page'
-      //   }
-      // }
     ]   
   }
 ];

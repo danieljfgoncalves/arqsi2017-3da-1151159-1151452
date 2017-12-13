@@ -30,8 +30,26 @@ export class AuthService {
     + ((this.userInfo) ? this.userInfo.roles[0] + this.userInfo.id : "null"));
   }
 
-  signupUser(name: string, password: string) {
+  signupUser(name: string, password: string, email: string ) {
     //your code for signing up the new user
+
+    var body = { "name": name, "password": password, "email": email, "roles": ["patient"] };
+
+    return new Observable<boolean>(observer => {
+      this.http.post<boolean>(this.urlRegister, body)
+        .subscribe(data => {
+          console.log(data);
+          observer.next(true);
+        },
+        (err: HttpErrorResponse) => {
+          if (err.error instanceof Error) {
+            console.log("Client-side error occured.");
+          } else {
+            console.log("Server-side error occured.");
+          } console.log(err);
+          observer.next(false);
+        });
+    });
   }
 
   signinUser(name: string, password: string): Observable<boolean> {
