@@ -34,7 +34,7 @@ exports.postRegistration = function (req, res) {
         function (err, user) {
             if (err) return res.status(500).send({ message:"There was a problem registering the user.", error: err});
         
-            res.status(200).send("User [" + user.name + "] registered with success.");
+            res.status(200).send({ message: "Successfully registered.", username: user.name });
     });
 }
 
