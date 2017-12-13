@@ -8,7 +8,8 @@ var User = require('../models/user');
 // GET /api/comments
 exports.get_comments = (req, res) => {
     if ( !( req.roles.includes(roles.Role.ADMIN) || 
-            req.roles.includes(roles.Role.PHYSICIAN) ) ) {
+            req.roles.includes(roles.Role.PHYSICIAN) ||
+            req.roles.includes(roles.Role.PHARMACIST) ) ) {
                 res.status(401).json({"Message":"Unauthorized User."});
         return;
     }
